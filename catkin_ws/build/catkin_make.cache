@@ -1,2 +1,0 @@
-adafruit_drivers:dagu_car:description:duckietown:duckietown_gazebo:duckietown_msgs:husky:joy_mapper:models/duckiebot:models/mobile_bot:mvpcrane
--DCATKIN_DEVEL_PREFIX=/home/david/gazebo_test/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/david/gazebo_test/catkin_ws/install -G Unix Makefiles
