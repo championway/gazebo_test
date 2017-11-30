@@ -1,0 +1,8 @@
+prefix=/home/david/gazebo_test/catkin_ws/install
+
+Name: duckietown
+Description: Description of duckietown
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/david/gazebo_test/catkin_ws/install/lib 
+Requires: 

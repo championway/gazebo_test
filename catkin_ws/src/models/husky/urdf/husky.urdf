@@ -1,0 +1,255 @@
+<robot
+  name="husky">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-4.3277E-05 -3.3441E-05 -0.00070139"
+        rpy="0 0 0" />
+      <mass
+        value="2.8046E-09" />
+      <inertia
+        ixx="1.7572E-15"
+        ixy="1.109E-20"
+        ixz="-8.4864E-17"
+        iyy="1.8804E-15"
+        iyz="-7.1584E-17"
+        izz="2.8278E-16" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="lf_wheel_link">
+    <inertial>
+      <origin
+        xyz="-0.00054376071578781 -0.000310978431067208 -0.000577027448249754"
+        rpy="0 0 0" />
+      <mass
+        value="2.80464017243078E-09" />
+      <inertia
+        ixx="1.508650984274E-15"
+        ixy="-2.57888347992402E-17"
+        ixz="-5.58504850122251E-16"
+        iyy="1.88043061916727E-15"
+        iyz="-6.67769520272478E-17"
+        izz="5.31363114798281E-16" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/lf_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/lf_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lf_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.00025598 0.00027754 3.283E-05"
+      rpy="0 -0.3687 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lf_wheel_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="rf_wheel_link">
+    <inertial>
+      <origin
+        xyz="5.28929750980433E-05 0.000253620795161685 -0.000791103896404508"
+        rpy="0 0 0" />
+      <mass
+        value="2.80464017243078E-09" />
+      <inertia
+        ixx="1.54073274966701E-15"
+        ixy="3.13919259161803E-17"
+        ixz="5.28720443892034E-16"
+        iyy="1.88043061916727E-15"
+        iyz="-6.43332908347218E-17"
+        izz="4.99281349405269E-16" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/rf_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/rf_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rf_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.000256 -0.00028706 3.2825E-05"
+      rpy="0 0.45381 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rf_wheel_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="rb_wheel_link">
+    <inertial>
+      <origin
+        xyz="0.000596666682478878 0.000252033295297285 -0.000477824539359482"
+        rpy="0 0 0" />
+      <mass
+        value="2.80464017243078E-09" />
+      <inertia
+        ixx="1.34833295384458E-15"
+        ixy="4.12249397615216E-17"
+        ixz="6.65509326100113E-16"
+        iyy="1.88043061916727E-15"
+        iyz="-5.85211898717958E-17"
+        izz="6.91681145227709E-16" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/rb_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/rb_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rb_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.000256 -0.00028547 3.2825E-05"
+      rpy="0 0.61355 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rb_wheel_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="lb_wheel_link">
+    <inertial>
+      <origin
+        xyz="0.000352026380163772 -0.000310978460869531 -0.000678531707986382"
+        rpy="0 0 0" />
+      <mass
+        value="2.80464017243078E-09" />
+      <inertia
+        ixx="1.73349801065527E-15"
+        ixy="1.39918294456689E-17"
+        ixz="2.04037278376967E-16"
+        iyy="1.88043061916727E-15"
+        iyz="-7.02029488776302E-17"
+        izz="3.06516088417014E-16" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/lb_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://husky/meshes/lb_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lb_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.000256 0.00027754 3.2825E-05"
+      rpy="0 0.19657 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lb_wheel_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+</robot>
