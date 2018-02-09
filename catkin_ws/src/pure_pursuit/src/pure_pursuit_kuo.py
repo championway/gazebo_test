@@ -274,7 +274,7 @@ class gazebo_pure_pursuit():
         #print theta
         psi = np.arctan2(delta_y, delta_x) #* rad_to_deg_conv
         # print "between_angle", between_angle*180/math.pi
-        #print theta-psi
+        print theta-psi
         return theta - psi
 
     def pub_object(self, x, y):
