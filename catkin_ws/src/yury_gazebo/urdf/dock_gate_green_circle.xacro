@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<robot name="dock_gate_green_circle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--                            BOAT HULL                                  -->
+  <link name="boat_hull">
+    <visual name="visual">
+      <geometry>
+        <mesh filename="file://$(find gazebo_simulation)/urdf/collada/dock_gate_green_circle.dae" />
+      </geometry>
+    </visual>
+
+    <inertial>
+       <mass value="0.5" />
+       <inertia
+         ixx="0.0000020778656"
+         ixy="-0.000000089099184"
+         ixz="0.0000000000189384648"
+         iyy="0.00000824124569"
+         iyz="0.0000000000531947773"
+         izz="0.0000070840279"
+       />
+    </inertial>
+
+    <buoyancy>
+      <compensation>1.05</compensation>
+      <origin xyz="0 0 0.0"/>
+      <limit radius="0.015"/>
+      <damping xyz="60 100 100"/>
+    </buoyancy>
+  </link>
+
+  <gazebo>
+    <static>false</static>
+  </gazebo>
+
+</robot>

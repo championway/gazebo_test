@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="paused" default="false"/>
+
+    <!--               Launch Gazebo with underwater world                   -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="world_name" value="$(find freefloating_gazebo)/world/underwater.world"/>
+    </include>
+
+    <!--                         Spawning models                             -->
+    <!-- 00: Water Level Plane -->
+    <group>
+      <param name="water_level" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/water_level.sdf"/>
+      <node name="terrain_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-sdf -model water_level -param water_level -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0"/>
+    </group>
+
+    <!-- 01: Boat Models -->
+    <group>
+      <!-- 01: Aries Boat #01 -->
+      <param name="aries/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/aries_single_aa.xacro"/>
+      <node name="aries_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model aries -param aries/robot_description -x 0 -y 0 -z 1 -R 0 -P 0 -Y 0"/>
+
+      <param name="dock_gate_red_cross/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/dock_gate_red_cross.xacro"/>
+      <node name="gate_01_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model dock_gate_red_cross -param dock_gate_red_cross/robot_description -x 1.5 -y 0 -z 1 -R 0 -P 0 -Y 3.14"/>
+
+      <param name="dock_gate_green_circle/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/dock_gate_green_circle.xacro"/>
+      <node name="gate_02_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model dock_gate_green_circle -param dock_gate_green_circle/robot_description -x 1.5 -y 0.25 -z 1 -R 0 -P 0 -Y 3.14"/>
+
+      <param name="yellow_duck_01/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_01" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_01 -param yellow_duck_01/robot_description -x -0.9 -y -0.4 -z 1 -R 0 -P 0 -Y 1.56"/>
+
+      <param name="yellow_duck_02/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_02" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_02 -param yellow_duck_02/robot_description -x -0.5 -y -0.5 -z 1 -R 0 -P 0 -Y 1.00"/>
+
+      <param name="yellow_duck_03/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_03" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_03 -param yellow_duck_03/robot_description -x 0.7 -y 0.5 -z 1 -R 0 -P 0 -Y -1.00"/>
+
+      <param name="yellow_duck_04/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_04" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_04 -param yellow_duck_04/robot_description -x 1 -y 1 -z 1 -R 0 -P 0 -Y 0"/>
+
+      <param name="yellow_duck_05/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_05" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_05 -param yellow_duck_05/robot_description -x 0.3 -y 0.8 -z 1 -R 0 -P 0 -Y 1.40"/>
+
+      <param name="yellow_duck_06/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/yellow_duck.xacro"/>
+      <node name="duck_spawner_06" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model yellow_duck_06 -param yellow_duck_06/robot_description -x -0.4 -y -0.3 -z 1 -R 0 -P 0 -Y 0.40"/>
+
+      <param name="black_sphere_01/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/black_sphere.xacro"/>
+      <node name="black_sphere_01" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model black_sphere_01 -param black_sphere_01/robot_description -x 0.5 -y -0.5 -z 1 -R 0 -P 0 -Y 1.00"/>
+    </group>
+
+    <group ns="aries">
+        <!-- Load controller configurations (vehicle and arm) from YAML file to parameter server -->
+        <rosparam file="$(find gazebo_simulation)/config/aries_control.yaml" command="load"/>
+
+        <!-- Launch low-level PID control for body and arm -->
+        <node name="pid_control" pkg="freefloating_gazebo" type="pid_control" output="screen"/>
+    </group>
+</launch>

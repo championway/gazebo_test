@@ -1,0 +1,6 @@
+<launch>
+  <!--           PROOF OF CONCEPT FOR SWIMMING MODELS IN GAZEBO              -->
+  <include file="$(find gazebo_simulation)/launch/boat_control.launch"/>
+  <include file="$(find gazebo_simulation)/launch/water_test.launch"/>
+  <node name="boat_control_01" pkg="gazebo_simulation" type="boat_control_01.py" output="screen"/>
+</launch>

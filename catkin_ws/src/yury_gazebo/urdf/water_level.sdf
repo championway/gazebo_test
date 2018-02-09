@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <model name="water_level">
+    <static>true</static>
+    <link name="water_surface">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>file://$(find gazebo_simulation)/urdf/collada/water/water_pool_100x100.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

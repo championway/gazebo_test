@@ -1,0 +1,175 @@
+<?xml version="1.0" ?>
+<robot name="aries" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="float_compensation" value="2.60"/>
+  <xacro:property name="limit_radius" value="0.031"/>
+  <!-- Don't touch z_shift, it may break the freefloating_gazebo! -->
+  <xacro:property name="z_shift" value="0.00"/>
+
+  <gazebo>
+    <static>false</static>
+  </gazebo>
+
+  <!--                           BOAT HULL 00                                -->
+  <link name="boat_hull_00">
+      <visual name="boat_hull_00_visual">
+          <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+          <geometry>
+            <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_00L.dae" />
+          </geometry>
+      </visual>
+
+      <collision name="boat_hull_00_collision">
+        <geometry>
+          <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_00L.dae" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+        <mass value="0.2" />
+        <inertia
+          ixx="0.000000189584528"
+          ixy="-0.000000019624792"
+          ixz="-0.000000030762472"
+          iyy="0.000000387068224"
+          iyz="0.000000011436007"
+          izz="0.000000392989152"
+        />
+      </inertial>
+
+      <buoyancy>
+        <compensation>${float_compensation}</compensation>
+        <origin xyz="0.00 0.00 0.00"/>
+        <limit radius="${limit_radius}"/>
+        <damping xyz="60 100 100"/>
+      </buoyancy>
+  </link>
+
+  <!--                           BOAT HULL 01                                -->
+  <link name="boat_hull_01">
+      <visual name="boat_hull_01_visual">
+          <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+          <geometry>
+            <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_01L.dae" />
+          </geometry>
+      </visual>
+
+      <collision name="boat_hull_01_collision">
+        <geometry>
+          <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_01L.dae" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+        <mass value="0.2" />
+        <inertia
+	         ixx="0.000000189568800"
+	         ixy="-0.000000019635088"
+	         ixz="0.000000030766816"
+	         iyy="0.000000387051808"
+	         iyz="-0.000000011429428"
+	         izz="0.000000392972160"
+        />
+      </inertial>
+
+      <buoyancy>
+        <compensation>${float_compensation}</compensation>
+        <origin xyz="0.00 0.00 0.00"/>
+        <limit radius="${limit_radius}"/>
+        <damping xyz="60 100 100"/>
+      </buoyancy>
+  </link>
+
+  <joint name="base_to_01" type="floating">
+    <parent link="boat_hull_00"/>
+    <child link="boat_hull_01"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!--                           BOAT HULL 10                                -->
+  <link name="boat_hull_10">
+      <visual name="boat_hull_10_visual">
+          <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+          <geometry>
+            <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_10L.dae" />
+          </geometry>
+      </visual>
+
+      <collision name="boat_hull_10_collision">
+        <geometry>
+          <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_10L.dae" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+        <mass value="0.2" />
+        <inertia
+	         ixx="0.000000257059536"
+	         ixy="-0.000000000000027"
+	         ixz="0.000000000000002"
+	         iyy="0.000000717683072"
+	         iyz="0.000000020537530"
+	         izz="0.000000725221888"
+        />
+      </inertial>
+
+      <buoyancy>
+        <compensation>${float_compensation}</compensation>
+        <origin xyz="0.00 0.00 0.00"/>
+        <limit radius="${limit_radius}"/>
+        <damping xyz="60 100 100"/>
+      </buoyancy>
+  </link>
+
+  <joint name="base_to_10" type="floating">
+    <parent link="boat_hull_00"/>
+    <child link="boat_hull_10"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!--                           BOAT HULL 11                                -->
+  <link name="boat_hull_11">
+      <visual name="boat_hull_11_visual">
+          <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+          <geometry>
+            <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_11L.dae" />
+          </geometry>
+      </visual>
+
+      <collision name="boat_hull_11_collision">
+        <geometry>
+          <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull_11L.dae" />
+        </geometry>
+      </collision>
+
+      <inertial>
+        <origin xyz="0.0 0.0 ${z_shift}" rpy="0.0 0.0 0.0"/>
+        <mass value="0.2" />
+        <inertia
+	         ixx="0.000000257060976"
+	         ixy="-0.000000000000073"
+	         ixz="-0.000000000000202"
+	         iyy="0.000000717684736"
+	         iyz="-0.000000020538182"
+	         izz="0.000000725222656"
+        />
+      </inertial>
+
+      <buoyancy>
+        <compensation>${float_compensation}</compensation>
+        <origin xyz="0.00 0.00 0.00"/>
+        <limit radius="${limit_radius}"/>
+        <damping xyz="60 100 100"/>
+      </buoyancy>
+  </link>
+
+  <joint name="base_to_11" type="floating">
+    <parent link="boat_hull_00"/>
+    <child link="boat_hull_11"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

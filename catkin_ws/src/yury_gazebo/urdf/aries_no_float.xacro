@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<robot name="aries" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--                            BOAT HULL                                  -->
+  <link name="boat_hull">
+    <visual>
+      <geometry>
+      <!--
+        <mesh filename="file://$(find gazebo_simulation)/urdf/collada/boat_hull.dae" />
+      -->
+      <box size="0.254000 0.123193 0.062000"/>
+      </geometry>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.254000 0.123193 0.062000" />
+      </geometry>
+    </collision>
+
+    <inertial>
+       <mass value="0.8" />
+       <inertia
+	      ixx="0.107618"
+	      ixy="0.000000"
+	      ixz="0.000000"
+	      iyy="0.103179"
+	      iyz="0.000000"
+	      izz="0.098577"
+       />
+    </inertial>
+  </link>
+
+  <gazebo>
+    <static>false</static>
+  </gazebo>
+
+</robot>

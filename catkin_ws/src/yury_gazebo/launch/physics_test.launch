@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="paused" default="false"/>
+
+    <!--               Launch Gazebo with underwater world                   -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" value="$(arg paused)"/>
+    </include>
+
+    <!--                         Spawning models                             -->
+    <!-- 01: Boat Models -->
+    <group>
+      <!-- 01: Aries Boat #01 -->
+      <param name="aries/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/aries_no_float.xacro"/>
+      <node name="aries_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model aries -param aries/robot_description -x 0 -y 0 -z 0.1 -R 0 -P 0 -Y 0"/>
+
+      <param name="aries_02/robot_description" command="$(find xacro)/xacro --inorder $(find gazebo_simulation)/urdf/aries_no_float.xacro"/>
+      <node name="aries_02_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model aries_02 -param aries_02/robot_description -x 0.05 -y 0 -z 1.0 -R 0 -P 0 -Y 0"/>
+    </group>
+</launch>
