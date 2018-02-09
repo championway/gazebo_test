@@ -42,7 +42,7 @@ class JoyMapper(object):
         self.pub_pressB = rospy.Publisher("~press_B",BoolStamped,queue_size=1)
         self.pub_pressX = rospy.Publisher("~press_X",BoolStamped,queue_size=1)
         self.pub_pressY = rospy.Publisher("~press_Y",BoolStamped,queue_size=1)
-        self.pub_car_twist = rospy.Publisher("/cmd_vel",Twist,queue_size=1)
+        self.pub_car_twist = rospy.Publisher("/david/cmd_vel",Twist,queue_size=1)
 #        self.pub_picture = rospy.Subscriber("~photo",sensor_msgs,queue_size=1))
         # Subscriptions
         self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
