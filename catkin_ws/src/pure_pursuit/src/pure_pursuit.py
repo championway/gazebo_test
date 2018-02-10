@@ -27,12 +27,12 @@ class gazebo_pure_pursuit():
         self.robot_pose = (0, 0, 0)#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
-        self.waypoints = [(0, 0),(3,3),(1,1)]
+        self.waypoints = [(0, 0),(3,3),(1,1),(-5,2)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
-        self.lookahead_distance = 0.1
-        self.lookahead_distance_adjust = 0.1
-        self.threshold_proximity = 0.4      # How close the robot needs to be to the final waypoint to stop driving
+        self.lookahead_distance = 0.8
+        self.lookahead_distance_adjust = 0.8
+        self.threshold_proximity = 0.1      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
 
@@ -170,7 +170,7 @@ class gazebo_pure_pursuit():
             if B**2 - 4*A*C < 0:    # Circle does not intersect line
                 print "no solution"
                 #print(self.distanceBtwnPoints(p, q, x1, y1))
-                self.lookahead_distance_adjust = self.lookahead_distance_adjust + 0.1
+                self.lookahead_distance_adjust = self.lookahead_distance_adjust + 0.03
                 #print start, " ", end
                 return self.circleIntersect(self.robot_pose, start, end, self.lookahead_distance_adjust)
             # Points of intersection (could be the same if circle is tangent to line)
@@ -193,7 +193,7 @@ class gazebo_pure_pursuit():
             #rospy.loginfo('is returning2')
             #self.lookahead_distance_adjust = self.lookahead_distance
             return (x_intersect2, y_intersect2)
-        self.lookahead_distance_adjust = self.lookahead_distance_adjust - 0.1
+        self.lookahead_distance_adjust = self.lookahead_distance_adjust - 0.03
         return self.circleIntersect(self.robot_pose, start, end, self.lookahead_distance_adjust)
 
     def pure_pursuit(self):
@@ -213,6 +213,9 @@ class gazebo_pure_pursuit():
         if self.start:
             fake_robot_waypoint = (x_robot, y_robot)
         else:
+            #i = self.closestPoint(self.robot_pose, wp[cwpi-1], wp[cwpi])
+            #print (len(i), " ", wp[cwpi-1], wp[cwpi])
+            #fake_robot_waypoint = i[:2]
             fake_robot_waypoint = self.closestPoint(self.robot_pose, wp[cwpi-1], wp[cwpi])[:2]
             if fake_robot_waypoint == (None, None):
                 fake_robot_waypoint = (wp[cwpi-1][0], wp[cwpi-1][1])
