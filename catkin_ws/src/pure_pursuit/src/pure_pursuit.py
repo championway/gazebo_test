@@ -17,45 +17,25 @@ class gazebo_pure_pursuit():
     def __init__(self):
         # Init subscribers and publishers
         self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
-        #self.sub_grab_object = rospy.Subscriber('/gripper_mode/grab_object', Bool, self.grabCB, queue_size=1)
-        # self.pose_sub = rospy.Subscriber("/pf/viz/inferred_pose", PoseStamped, self.poseCB, queue_size=1)
-        # self.waypoint_sub = rospy.Subscriber("/rrt/viz/path", Path, self.waypointCB, queue_size=1)
-        #self.click_sub = rospy.Subscriber("/clicked_point", PointStamped, self.clicked_pose, queue_size=1)
         self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
-        self.pub_object_point = rospy.Publisher('/gripper_mode/object', Point, queue_size=1)
         self.pub_finish = rospy.Publisher('/gripper_mode/finished', Bool, queue_size=1)
         # Init attributes
-        self.default_speed = 0.9
-
+        self.default_speed = 2
         self.speed = self.default_speed
         self.steering_angle = 0
-
         self.robot_length = 0.22
-
         self.robot_pose = (0, 0, 0)#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
-        
-        self.waypoints = [(0, 0)]
-
+        self.waypoints = [(0, 0),(3,3),(-1,1)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
         self.lookahead_distance = 0.1
         self.threshold_proximity = 0.4      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
-
-        #self.way_point()
-        #self.stop_point_get()
-
-    '''def grabCB(self, msg):
-        if msg.data == True:
-            print "go to stop sign"
-            self.current_waypoint_index = 0
-            self.waypoints = [(self.stop_point[0], self.stop_point[1])]
-            self.active = True'''
+        self.start = True
 
     '''def way_point(self):
-        # waypoint_name = ["coke_can", "coke_can_0", "coke_can_1", "coke_can_2"]
         waypoint_name = ["my_cylinder", "my_cylinder_0", "my_cylinder_1", "my_cylinder_2"]
 
         for i in range(4):
@@ -68,17 +48,6 @@ class gazebo_pure_pursuit():
                 print "Service call failed: %s"%e
 
         print self.waypoints '''
-
-    '''def stop_point_get(self):
-        rospy.wait_for_service('/gazebo/get_model_state')
-        try:
-            get_model_state = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
-            model_state = get_model_state("Stop Sign","")
-            self.stop_point = (model_state.pose.position.x, model_state.pose.position.y)
-        except rospy.ServiceException, e:
-            print "Service call failed: %s"%e
-
-        print self.stop_point'''
 
     def gazebo_cmd(self, v, w):
         model_state_msg = Twist()
@@ -103,7 +72,7 @@ class gazebo_pure_pursuit():
         # print self.robot_pose
 
         # print 'robot_pose:', self.robot_pose#, 'waypoints:', self.waypoints
-        self.destination_pose = self.circleIntersect(self.lookahead_distance)
+        self.destination_pose = self.pure_pursuit()
 
         if self.destination_pose == None:
             self.active = False
@@ -114,148 +83,26 @@ class gazebo_pure_pursuit():
             self.pub_finish.publish(msg)
 
         else:
-            # print 'destination_pose:', self.destination_pose
-            # print 'waypoint_index:', self.current_waypoint_index    
             self.speed = self.default_speed
             distance_to_destination= self.getDistance(self.robot_pose, self.destination_pose)
             angle_to_destination = -self.getAngle(self.robot_pose, self.destination_pose)       
             # self.steering_angle = np.arctan((2 * self.robot_length * np.sin(angle_to_destination)) / distance_to_destination)         
             # print "robot_head",euler[2]*180/math.pi,"angle_to_destination", angle_to_destination*180/math.pi
-            w = 3*((angle_to_destination + math.pi) / (2 * math.pi) - 0.5)
+            w = 10*((angle_to_destination + math.pi) / (2 * math.pi) - 0.5)
+            '''if w > 0:
+                w = 1
+            else:
+                w = -1'''
             #print angle_to_destination
             self.gazebo_cmd(self.speed,w)
 
-    '''def waypointCB(self, msg):
-    # Retrieve waypoints from planner or from RViz
-        self.waypoints = [(pose.pose.position.x, pose.pose.position.y) for pose in msg.poses]'''
-    '''
-    def clicked_pose(self, msg):
-        self.waypoints.append((msg.point.x, msg.point.y))
-    '''
+    # calculate the distance between two points
     def distanceBtwnPoints(self, x1, y1, x2, y2):
         return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
+    # tell if the point(x,y) is on the line segment(x_start,y_start)-->(x_end,y_end)
     def isPointOnLineSegment(self, x, y, x_start, y_start, x_end, y_end):
         return round(self.distanceBtwnPoints(x_start, y_start, x, y) + self.distanceBtwnPoints(x, y, x_end, y_end), 5) == round(self.distanceBtwnPoints(x_start, y_start, x_end, y_end), 5)
-
-    # Find point on path that is closest to current robot position
-    def closestPoint(self):
-        x_robot, y_robot = self.robot_pose[:2]
-
-        # Initialize values
-        x_closest, y_closest = None, None
-        waypoint_index = self.current_waypoint_index
-        shortest_distance = self.distanceBtwnPoints(x_robot, y_robot, self.waypoints[waypoint_index][0], self.waypoints[waypoint_index][1]) #float('inf')
-
-        for i in range(self.current_waypoint_index, len(self.waypoints) - 1):
-            x1, y1 = self.waypoints[i]
-            x2, y2 = self.waypoints[i+1]
-
-            # For line (segment) equation ax + by + c = 0
-            a = y1 - y2
-            b = x2 - x1
-            c = -b*y1 - a*x1  # Equivalently: x1*y2 - x2*y1
-
-            x_close = (b*(b*x_robot - a*y_robot) - a*c)/(a**2 + b**2)
-            y_close = (a*(-b*x_robot + a*y_robot) - b*c)/(a**2 + b**2)
-
-            if not self.isPointOnLineSegment(x_close, y_close, x1, y1, x2, y2):
-                continue
-
-            distance = self.distanceBtwnPoints(x_robot, y_robot, x_close, y_close)
-
-            if distance < shortest_distance:
-                shortest_distance = distance
-                x_closest = x_close
-                y_closest = y_close
-                waypoint_index = i
-
-        if waypoint_index != self.current_waypoint_index:
-            print "current waypoint_index is No.%d"%(waypoint_index)
-        self.current_waypoint_index = waypoint_index
-        self.distance_from_path = shortest_distance
-        return (x_closest, y_closest)
-
-    # Find next point along the path at which the lookahead distance "circle" intersects, or None if we can stop driving
-    def circleIntersect(self, lookahead_distance):
-        if len(self.waypoints) == 0:
-            return None
-        if len(self.waypoints) == 1:
-            x_endpoint, y_endpoint = self.waypoints[-1]
-            x_robot, y_robot = self.robot_pose[:2]
-            if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
-                return None
-            return self.waypoints[0]
-
-        # If we are at the second-to-last waypoint and the robot is close enough to final waypoint, return None (to signal "stop")
-        if self.current_waypoint_index == len(self.waypoints) - 2:
-            x_endpoint, y_endpoint = self.waypoints[-1]
-            x_robot, y_robot = self.robot_pose[:2]
-            if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
-                self.pub_object(x_endpoint, y_endpoint)
-                return None
-            else:
-                return self.waypoints[-1]
-
-    # We only want to search the first path line segment past the point at which the robot is, so we make a "fake waypoint" for the current location of the robot along the path, and search from there onwards
-        fake_robot_waypoint = self.closestPoint()
-        if fake_robot_waypoint == (None, None):
-            return self.waypoints[self.current_waypoint_index + 1]
-        # insert into new way point, and remove waypoints which have been visited
-        waypoints_to_search = [fake_robot_waypoint] + self.waypoints[self.current_waypoint_index + 1 : ]
-
-        # If lookahead distance is shorter than distance from path, recall function with larger lookahead distance
-        if lookahead_distance < self.distance_from_path:
-            return self.circleIntersect(self.distance_from_path + 0.1)
-
-        # For circle equation (x - p)^2 + (y - q)^2 = r^2
-        p, q = self.robot_pose[:2]
-        r = lookahead_distance
-
-        # Check line segments along path until intersection point is found or we run out of waypoints
-        for i in range(len(waypoints_to_search) - 1):
-            # For line (segment) equation y = mx + b
-            x1, y1 = waypoints_to_search[i]
-            x2, y2 = waypoints_to_search[i+1]
-
-            if x2 - x1 != 0:
-                m = (y2 - y1)/(x2 - x1)
-                b = y1 - m*x1
-
-                #print "r=", r
-
-                # Quadratic equation to solve for x-coordinate of intersection point
-                A = m**2 + 1
-                B = 2*(m*b - m*q - p)
-                C = q**2 - r**2 + p**2 - 2*b*q + b**2
-
-                if B**2 - 4*A*C < 0:    # Circle does not intersect line
-                    print "no solution"
-                    continue
-                
-                # Points of intersection (could be the same if circle is tangent to line)
-                x_intersect1 = (-B + math.sqrt(B**2 - 4*A*C))/(2*A)
-                x_intersect2 = (-B - math.sqrt(B**2 - 4*A*C))/(2*A)
-                y_intersect1 = m*x_intersect1 + b
-                y_intersect2 = m*x_intersect2 + b
-            else:
-                x_intersect1 = x1
-                x_intersect2 = x1
-                y_intersect1 = q - math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
-                y_intersect2 = q + math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
-
-            # See if intersection points are on this specific segment of the line
-            #print 'x_int, yint', x_intersect1, y_intersect1, x_intersect2, y_intersect2
-            #print 'waypoints', x1, y1, x2, y2
-            if self.isPointOnLineSegment(x_intersect1, y_intersect1, x1, y1, x2, y2):
-                #rospy.loginfo('is returning')
-                return (x_intersect1, y_intersect1)
-            elif self.isPointOnLineSegment(x_intersect2, y_intersect2, x1, y1, x2, y2):
-                #rospy.loginfo('is returning2')
-                return (x_intersect2, y_intersect2)
-
-        # If lookahead circle does not intersect the path at all (and the other two conditions at beginning of this function failed), then reduce the lookahead distance
-        return self.circleIntersect(lookahead_distance/2)
 
     def getDistance(self, start_pose, end_pose):
         #Takes a starting coordinate (x,y,theta) and ending coordinate (x,y) and returns distance between them in map units
@@ -278,12 +125,105 @@ class gazebo_pure_pursuit():
         #print theta-psi
         return theta - psi
 
-    def pub_object(self, x, y):
-        object_msg = Point()
-        object_msg.x = x
-        object_msg.y = y
-        self.pub_object_point.publish(object_msg)
+    # Find a point on the line which is closest to the point(robot poisition)
+    def closestPoint(self, point, start, end):
+        # Initialize values
+        x, y = point[:2]
+        x_start, y_start = start[:2]
+        x_end, y_end = end[:2]
+        x_closest, y_closest = None, None
+        shortest_distance = self.distanceBtwnPoints(x, y, self.waypoints[self.current_waypoint_index][0], self.waypoints[self.current_waypoint_index][1])
 
+        # ======== Distance from a point to a line ========
+        # https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+        # For line (segment) equation ax + by + c = 0
+        a = y_start - y_end
+        b = x_end - x_start
+        c = -b*y_start - a*x_start  # Equivalently: x_start*y_end - x_end*y_start
+        x_closest = (b*(b*x - a*y) - a*c)/(a**2 + b**2)
+        y_closest = (a*(-b*x + a*y) - b*c)/(a**2 + b**2)
+        distance = self.distanceBtwnPoints(x, y, x_closest, y_closest)
+        if not self.isPointOnLineSegment(x_closest, y_closest, x_start, y_start, x_end, y_end):
+            return (None, None, None)
+        return (x_closest, y_closest, distance)
+
+    # Using lookahead to find out the waypoint
+    def circleIntersect(self, point, start, end, lookahead_distance):
+        # For circle equation (x - p)^2 + (y - q)^2 = r^2
+        p, q = point[:2]
+        r = lookahead_distance
+        # Check line segments along path until intersection point is found or we run out of waypoints
+        # For line (segment) equation y = mx + b
+        x1, y1 = start[:2]
+        x2, y2 = end[:2]
+
+        if x2 - x1 != 0:
+            m = (y2 - y1)/(x2 - x1)
+            b = y1 - m*x1
+
+            # Quadratic equation to solve for x-coordinate of intersection point
+            A = m**2 + 1
+            B = 2*(m*b - m*q - p)
+            C = q**2 - r**2 + p**2 - 2*b*q + b**2
+
+            if B**2 - 4*A*C < 0:    # Circle does not intersect line
+                print "no solution"
+                return self.circleIntersect(point, start, end, lookahead_distance + 1)
+            # Points of intersection (could be the same if circle is tangent to line)
+            x_intersect1 = (-B + math.sqrt(B**2 - 4*A*C))/(2*A)
+            x_intersect2 = (-B - math.sqrt(B**2 - 4*A*C))/(2*A)
+            y_intersect1 = m*x_intersect1 + b
+            y_intersect2 = m*x_intersect2 + b
+        else:
+            x_intersect1 = x1
+            x_intersect2 = x1
+            y_intersect1 = q - math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
+            y_intersect2 = q + math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
+
+        # See if intersection points are on this specific segment of the line
+        if self.isPointOnLineSegment(x_intersect1, y_intersect1, x1, y1, x2, y2):
+            #rospy.loginfo('is returning')
+            return (x_intersect1, y_intersect1)
+        elif self.isPointOnLineSegment(x_intersect2, y_intersect2, x1, y1, x2, y2):
+            #rospy.loginfo('is returning2')
+            return (x_intersect2, y_intersect2)
+        return self.circleIntersect(point, start, end, lookahead_distance - 0.1)
+
+    def pure_pursuit(self):
+        x_robot, y_robot = self.robot_pose[:2]
+        wp = self.waypoints
+        cwpi = self.current_waypoint_index
+        fake_robot_waypoint = (None, None)
+        if len(wp) == 0:
+            print "No target waypoint"
+            return None
+        # if there is only one waypoint left
+        elif cwpi == len(wp)-1:
+            x_endpoint, y_endpoint = wp[-1]
+            if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
+                return None
+
+        if self.start:
+            fake_robot_waypoint = (x_robot, y_robot)
+        else:
+            fake_robot_waypoint = self.closestPoint(self.robot_pose, wp[cwpi-1], wp[cwpi])[:2]
+            if fake_robot_waypoint == (None, None):
+                print "Here"
+                fake_robot_waypoint = (x_robot, y_robot)
+        # insert new fake waypoint, and remove waypoints which have been visited
+        waypoints_to_search = [fake_robot_waypoint] + wp[cwpi : ]
+
+        if self.lookahead_distance < self.distance_from_path:
+            x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.distance_from_path + 0.1)
+        else:
+            x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.lookahead_distance)
+
+        if round(x_intersect,3) == round(wp[cwpi][0], 3) and round(y_intersect, 3) == round(wp[cwpi][1], 3):
+            print "Arrived waypoint : %d"%(cwpi)
+            self.current_waypoint_index = self.current_waypoint_index + 1
+            if self.start:
+                self.start = False
+        return (x_intersect, y_intersect)
 
 if __name__=="__main__":
     # Tell ROS that we're making a new node.
