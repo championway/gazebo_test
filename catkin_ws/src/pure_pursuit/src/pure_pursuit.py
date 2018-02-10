@@ -20,17 +20,18 @@ class gazebo_pure_pursuit():
         self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
         self.pub_finish = rospy.Publisher('/gripper_mode/finished', Bool, queue_size=1)
         # Init attributes
-        self.default_speed = 2
+        self.default_speed = 1.5
         self.speed = self.default_speed
         self.steering_angle = 0
         self.robot_length = 0.22
         self.robot_pose = (0, 0, 0)#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
-        self.waypoints = [(0, 0),(3,3),(-1,1)]
+        self.waypoints = [(0, 0),(3,3),(1,1)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
         self.lookahead_distance = 0.1
+        self.lookahead_distance_adjust = 0.1
         self.threshold_proximity = 0.4      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
@@ -168,7 +169,10 @@ class gazebo_pure_pursuit():
 
             if B**2 - 4*A*C < 0:    # Circle does not intersect line
                 print "no solution"
-                return self.circleIntersect(point, start, end, lookahead_distance + 1)
+                #print(self.distanceBtwnPoints(p, q, x1, y1))
+                self.lookahead_distance_adjust = self.lookahead_distance_adjust + 0.1
+                #print start, " ", end
+                return self.circleIntersect(self.robot_pose, start, end, self.lookahead_distance_adjust)
             # Points of intersection (could be the same if circle is tangent to line)
             x_intersect1 = (-B + math.sqrt(B**2 - 4*A*C))/(2*A)
             x_intersect2 = (-B - math.sqrt(B**2 - 4*A*C))/(2*A)
@@ -183,11 +187,14 @@ class gazebo_pure_pursuit():
         # See if intersection points are on this specific segment of the line
         if self.isPointOnLineSegment(x_intersect1, y_intersect1, x1, y1, x2, y2):
             #rospy.loginfo('is returning')
+            #self.lookahead_distance_adjust = self.lookahead_distance
             return (x_intersect1, y_intersect1)
         elif self.isPointOnLineSegment(x_intersect2, y_intersect2, x1, y1, x2, y2):
             #rospy.loginfo('is returning2')
+            #self.lookahead_distance_adjust = self.lookahead_distance
             return (x_intersect2, y_intersect2)
-        return self.circleIntersect(point, start, end, lookahead_distance - 0.1)
+        self.lookahead_distance_adjust = self.lookahead_distance_adjust - 0.1
+        return self.circleIntersect(self.robot_pose, start, end, self.lookahead_distance_adjust)
 
     def pure_pursuit(self):
         x_robot, y_robot = self.robot_pose[:2]
@@ -208,8 +215,7 @@ class gazebo_pure_pursuit():
         else:
             fake_robot_waypoint = self.closestPoint(self.robot_pose, wp[cwpi-1], wp[cwpi])[:2]
             if fake_robot_waypoint == (None, None):
-                print "Here"
-                fake_robot_waypoint = (x_robot, y_robot)
+                fake_robot_waypoint = (wp[cwpi-1][0], wp[cwpi-1][1])
         # insert new fake waypoint, and remove waypoints which have been visited
         waypoints_to_search = [fake_robot_waypoint] + wp[cwpi : ]
 
@@ -217,7 +223,8 @@ class gazebo_pure_pursuit():
             x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.distance_from_path + 0.1)
         else:
             x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.lookahead_distance)
-
+        if (x_intersect, y_intersect) == (None, None):
+            return (waypoints_to_search[0][0], waypoints_to_search[0][1])
         if round(x_intersect,3) == round(wp[cwpi][0], 3) and round(y_intersect, 3) == round(wp[cwpi][1], 3):
             print "Arrived waypoint : %d"%(cwpi)
             self.current_waypoint_index = self.current_waypoint_index + 1
