@@ -121,7 +121,7 @@ class gazebo_pure_pursuit():
             angle_to_destination = -self.getAngle(self.robot_pose, self.destination_pose)       
             # self.steering_angle = np.arctan((2 * self.robot_length * np.sin(angle_to_destination)) / distance_to_destination)         
             # print "robot_head",euler[2]*180/math.pi,"angle_to_destination", angle_to_destination*180/math.pi
-            w = (angle_to_destination + math.pi) / (2 * math.pi) - 0.5
+            w = 3*((angle_to_destination + math.pi) / (2 * math.pi) - 0.5)
             #print angle_to_destination
             self.gazebo_cmd(self.speed,w)
 
@@ -201,7 +201,7 @@ class gazebo_pure_pursuit():
         fake_robot_waypoint = self.closestPoint()
         if fake_robot_waypoint == (None, None):
             return self.waypoints[self.current_waypoint_index + 1]
-        
+        # insert into new way point, and remove waypoints which have been visited
         waypoints_to_search = [fake_robot_waypoint] + self.waypoints[self.current_waypoint_index + 1 : ]
 
         # If lookahead distance is shorter than distance from path, recall function with larger lookahead distance
@@ -230,6 +230,7 @@ class gazebo_pure_pursuit():
                 C = q**2 - r**2 + p**2 - 2*b*q + b**2
 
                 if B**2 - 4*A*C < 0:    # Circle does not intersect line
+                    print "no solution"
                     continue
                 
                 # Points of intersection (could be the same if circle is tangent to line)
@@ -254,7 +255,7 @@ class gazebo_pure_pursuit():
                 return (x_intersect2, y_intersect2)
 
         # If lookahead circle does not intersect the path at all (and the other two conditions at beginning of this function failed), then reduce the lookahead distance
-        return self.circleIntersect(lookahead_distance - 0.1)
+        return self.circleIntersect(lookahead_distance/2)
 
     def getDistance(self, start_pose, end_pose):
         #Takes a starting coordinate (x,y,theta) and ending coordinate (x,y) and returns distance between them in map units
