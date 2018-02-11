@@ -201,12 +201,14 @@ class gazebo_pure_pursuit():
         wp = self.waypoints
         cwpi = self.current_waypoint_index
         fake_robot_waypoint = (None, None)
+        print cwpi, " ", len(wp)-1
         if len(wp) == 0:
             print "No target waypoint"
             return None
-        # if there is only one waypoint left
+            # if there is only one waypoint left
         elif cwpi == len(wp)-1:
             x_endpoint, y_endpoint = wp[-1]
+            print "last one"
             if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
                 return None
 
