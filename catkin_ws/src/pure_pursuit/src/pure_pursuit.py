@@ -27,10 +27,10 @@ class gazebo_pure_pursuit():
         self.robot_pose = None#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
-        self.waypoints = [(0, 0),(2,2),(-1,1),(-2,2),(0,0),(1,-2)]
+        self.waypoints = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
-        self.lookahead_distance = 0.3
+        self.lookahead_distance = 0.5
         #self.lookahead_distance_adjust = self.lookahead_distance
         self.threshold_proximity = 0.2      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True

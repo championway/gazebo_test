@@ -20,7 +20,7 @@ class pub_rviz():
         self.odom_pub = rospy.Publisher("visualization_marker",Marker,queue_size=1)
         self.waypoint_pub = rospy.Publisher("visualization_marker1",Marker,queue_size=1)
         self.robot_pose = None
-        self.waypoints = [(0, 0),(2,2),(-1,1),(-2,2),(0,0),(1,-2)]
+        self.waypoint_list = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
         self.initial_odom()
         self.initial_waypoint()
 
@@ -36,8 +36,9 @@ class pub_rviz():
         self.waypoint.scale.x = 0.03
         self.waypoint.scale.y = 0.03
         self.waypoint.color.r = 1.0
-        wp = Point()
-        for way in self.waypoints:
+        self.waypoint.color.a = 1.0
+        for way in self.waypoint_list:
+            wp = Point()
             wp.x, wp.y = way[:2]
             wp.z = 0
             self.waypoint.points.append(wp)
@@ -57,6 +58,8 @@ class pub_rviz():
         self.odom.color.a = 1.0
 
     def pub_waypoint(self):
+        #self.waypoint.points = self.odom.points
+        #print self.waypoint.points
         self.waypoint_pub.publish(self.waypoint)
 
     def pub_odom(self, pose):
