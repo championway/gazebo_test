@@ -24,7 +24,7 @@ class gazebo_pure_pursuit():
         self.speed = self.default_speed
         self.steering_angle = 0
         self.robot_length = 0.22
-        self.robot_pose = (0, 0, 0)#(-0.3, -0.1789, -0.0246)
+        self.robot_pose = None#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
         self.waypoints = [(0, 0),(2,2),(-1,1),(-2,2),(0,0),(1,-2)]

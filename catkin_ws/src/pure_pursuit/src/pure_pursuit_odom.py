@@ -25,7 +25,7 @@ class gazebo_pure_pursuit():
         self.speed = self.default_speed
         self.steering_angle = 0
         self.robot_length = 0.22
-        self.robot_pose = (0, 0, 0)#(-0.3, -0.1789, -0.0246)
+        self.robot_pose = None#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
         self.waypoints = [(0, 0),(2,2),(-1,1),(-2,2),(0,0),(1,-2)]
@@ -36,8 +36,21 @@ class gazebo_pure_pursuit():
         self.threshold_proximity = 0.2      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
-        self.odom = Marker()
+        self.initial_odom()        
 
+    def initial_odom(self):
+        self.odom = Marker()
+        self.odom.header.frame_id = "gazebo"
+        self.odom.header.stamp = rospy.Time.now()
+        self.odom.ns = "points_for_odometry"
+        self.odom.action = Marker.ADD
+        self.odom.pose.orientation.w = 1.0
+        self.odom.id = 0
+        self.odom.type = Marker.POINTS
+        self.odom.scale.x = 0.1
+        self.odom.scale.y = 0.1
+        self.odom.color.g = 1.0
+        self.odom.color.a = 1.0  
     '''def way_point(self):
         waypoint_name = ["my_cylinder", "my_cylinder_0", "my_cylinder_1", "my_cylinder_2"]
 
@@ -53,17 +66,6 @@ class gazebo_pure_pursuit():
         print self.waypoints '''
 
     def pub_odom(self):
-        self.odom.header.frame_id = "gazebo"
-        self.odom.header.stamp = rospy.Time.now()
-        self.odom.ns = "points_for_odometry"
-        self.odom.action = Marker.ADD
-        self.odom.pose.orientation.w = 1.0
-        self.odom.id = 0
-        self.odom.type = Marker.POINTS
-        self.odom.scale.x = 0.1
-        self.odom.scale.y = 0.1
-        self.odom.color.g = 1.0
-        self.odom.color.a = 1.0  
         p = Point()
         p.x, p.y = self.robot_pose[:2]
         p.z = 0
@@ -242,7 +244,7 @@ class gazebo_pure_pursuit():
         elif cwpi == len(wp)-1:
             if self.threshold_proximity < self.lookahead_distance:
                 self.lookahead_distance = self.threshold_proximity
-                print "change threshold distance for safty"
+                print "change lookahead distance for safty"
             x_endpoint, y_endpoint = wp[-1]
             #print "last one"
             if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
