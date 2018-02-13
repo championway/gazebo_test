@@ -13,7 +13,7 @@
       <torque>10</torque>
       <commandTopic>$(arg veh)/cmd_vel</commandTopic>
       <odometryTopic>$(arg veh)/odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+      <odometryFrame>gazebo</odometryFrame>
       <robotBaseFrame>base_link</robotBaseFrame>
     </plugin>
   </gazebo>

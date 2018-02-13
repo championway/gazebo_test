@@ -20,13 +20,14 @@ class pub_rviz():
         self.odom_pub = rospy.Publisher("visualization_marker",Marker,queue_size=1)
         self.waypoint_pub = rospy.Publisher("visualization_marker1",Marker,queue_size=1)
         self.robot_pose = None
+        self.frame_name = "gazebo"
         self.waypoint_list = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
         self.initial_odom()
         self.initial_waypoint()
 
     def initial_waypoint(self):
         self.waypoint = Marker()
-        self.waypoint.header.frame_id = "gazebo"
+        self.waypoint.header.frame_id = self.frame_name
         self.waypoint.header.stamp = rospy.Time.now()
         self.waypoint.ns = "points_for_waypoint"
         self.waypoint.action = Marker.ADD
@@ -45,7 +46,7 @@ class pub_rviz():
 
     def initial_odom(self):
         self.odom = Marker()
-        self.odom.header.frame_id = "gazebo"
+        self.odom.header.frame_id = self.frame_name
         self.odom.header.stamp = rospy.Time.now()
         self.odom.ns = "points_for_odometry"
         self.odom.action = Marker.ADD
