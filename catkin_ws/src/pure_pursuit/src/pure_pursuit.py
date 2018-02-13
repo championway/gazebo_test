@@ -18,7 +18,9 @@ class gazebo_pure_pursuit():
         # Init subscribers and publishers
         self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
         self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
-        self.pub_finish = rospy.Publisher('/gripper_mode/finished', Bool, queue_size=1)
+        self.pub_lookahead = rospy.Publisher('/pure_pursuit/lookahead', Point, queue_size=1)
+        self.pub_finish = rospy.Publisher('/pure_pursuit/finished', Bool, queue_size=1)
+
         # Init attributes
         self.default_speed = 2
         self.speed = self.default_speed
@@ -50,6 +52,12 @@ class gazebo_pure_pursuit():
                 print "Service call failed: %s"%e
 
         print self.waypoints '''
+
+    def publish_lookhead(self, lookahead):
+        msg = Point()
+        msg.x, msg.y = lookahead[:2]
+        msg.z = 0
+        self.pub_lookahead.publish(msg)
 
     def gazebo_cmd(self, v, w):
         model_state_msg = Twist()
@@ -85,6 +93,7 @@ class gazebo_pure_pursuit():
             self.pub_finish.publish(msg)
 
         else:
+            self.publish_lookhead(self.destination_pose)
             self.speed = self.default_speed
             distance_to_destination= self.getDistance(self.robot_pose, self.destination_pose)
             angle_to_destination = -self.getAngle(self.robot_pose, self.destination_pose)       
