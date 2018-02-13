@@ -34,4 +34,5 @@ $ roslaunch pure_pursuit viz.launch
 ```
 Note:
 To change the path, please modify the following file
+
 gazebo_test/catkin_ws/src/pure_pursuit/config/path/path.yaml
