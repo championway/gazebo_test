@@ -15,18 +15,20 @@ This program utilizes pure pursuit to follow a given trajectory.
 
 class pub_rviz():
     def __init__(self):
-        # Init subscribers and publishers
-        self.sub_lookahead = rospy.Subscriber("/pure_pursuit/lookahead", Point, self.lookaheadCB, queue_size=1)
-        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
-        self.odom_pub = rospy.Publisher("odometry_marker",Marker,queue_size=1)
-        self.waypoint_pub = rospy.Publisher("waypoint_marker",Marker,queue_size=1)
-        self.lookahead_pub = rospy.Publisher("lookahead_marker",Marker,queue_size=1)
         self.robot_pose = Point()
+        self.finish = False
         self.frame_name = "gazebo"
         self.waypoint_list = rospy.get_param('~path')
         self.initial_odom()
         self.initial_lookahead()
         self.initial_waypoint()
+        # Init subscribers and publishers
+        self.sub_lookahead = rospy.Subscriber("/pure_pursuit/lookahead", Point, self.lookaheadCB, queue_size=1)
+        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
+        self.sub_finish = rospy.Subscriber("/pure_pursuit/finished", Bool, self.finishCB, queue_size=1)
+        self.odom_pub = rospy.Publisher("odometry_marker",Marker,queue_size=1)
+        self.waypoint_pub = rospy.Publisher("waypoint_marker",Marker,queue_size=1)
+        self.lookahead_pub = rospy.Publisher("lookahead_marker",Marker,queue_size=1)
 
     def initial_lookahead(self):
         self.lookahead = Marker()
@@ -89,6 +91,14 @@ class pub_rviz():
         self.odom.points.append(p)
         self.odom_pub.publish(self.odom)
 
+    def finishCB(self, msg):
+        if msg.data:
+            print "Finish"
+            self.finish = True
+            self.odom.points[:] = []
+        else:
+            self.finish = False
+
     def lookaheadCB(self, msg):
         p = Point()
         p.x = self.robot_pose.x
@@ -107,8 +117,9 @@ class pub_rviz():
         self.robot_pose.x = msg.pose[1].position.x
         self.robot_pose.y = msg.pose[1].position.y
         self.robot_pose.z = msg.pose[1].position.z
-        self.pub_odom()
-        self.pub_to_rviz()
+        if not self.finish:
+            self.pub_odom()    
+            self.pub_to_rviz()
 
 if __name__=="__main__":
     # Tell ROS that we're making a new node.

@@ -27,7 +27,7 @@ Open gazebo with one mobile robot
 $ roslaunch launch_gazebo duckiebot.launch 
 
 Run pure pursuit algorithm
-$ roslaunch pure_pursuit pure_pursuit.launch
+$ roslaunch pure_pursuit pure_pursuit.launch lookahead:=0.5
 
 Open Rviz to see the odometry
 $ roslaunch pure_pursuit viz.launch 

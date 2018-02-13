@@ -15,12 +15,6 @@ This program utilizes pure pursuit to follow a given trajectory.
 
 class gazebo_pure_pursuit():
     def __init__(self):
-        # Init subscribers and publishers
-        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
-        self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
-        self.pub_lookahead = rospy.Publisher('/pure_pursuit/lookahead', Point, queue_size=1)
-        self.pub_finish = rospy.Publisher('/pure_pursuit/finished', Bool, queue_size=1)
-
         # Init attributes
         self.default_speed = 2
         self.speed = self.default_speed
@@ -33,11 +27,16 @@ class gazebo_pure_pursuit():
         #self.waypoints = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
-        self.lookahead_distance = 0.5
+        self.lookahead_distance = rospy.get_param("~lookahead")
         #self.lookahead_distance_adjust = self.lookahead_distance
         self.threshold_proximity = 0.2      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
+        # Init subscribers and publishers
+        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
+        self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
+        self.pub_lookahead = rospy.Publisher('/pure_pursuit/lookahead', Point, queue_size=1)
+        self.pub_finish = rospy.Publisher('/pure_pursuit/finished', Bool, queue_size=1)
 
     '''def way_point(self):
         waypoint_name = ["my_cylinder", "my_cylinder_0", "my_cylinder_1", "my_cylinder_2"]
@@ -74,6 +73,9 @@ class gazebo_pure_pursuit():
     def model_stateCB(self, msg):
         if not self.active:
             return 
+        finish = Bool()
+        finish.data = False
+        self.pub_finish.publish(finish)
         quaternion_msg = [msg.pose[1].orientation.x, msg.pose[1].orientation.y, msg.pose[1].orientation.z, msg.pose[1].orientation.w]
         euler = tf.transformations.euler_from_quaternion(quaternion_msg)
         #print euler[2]
@@ -200,8 +202,8 @@ class gazebo_pure_pursuit():
         else:
             x_intersect1 = x1
             x_intersect2 = x1
-            y_intersect1 = q - math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
-            y_intersect2 = q + math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
+            y_intersect1 = q - math.sqrt(abs(-x1**2 + 2*x1*p - p**2 + r**2))
+            y_intersect2 = q + math.sqrt(abs(-x1**2 + 2*x1*p - p**2 + r**2))
 
         # See if intersection points are on this specific segment of the line
         if self.isPointOnLineSegment(x_intersect1, y_intersect1, x1, y1, x2, y2):
