@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<launch>
-   <node name="pub_rviz" pkg="pure_pursuit" type="pub_rviz.py" output="screen" clear_params="true" required="true"/>
-   <include file="$(find pure_pursuit)/launch/viz.launch"/>
-</launch>

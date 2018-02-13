@@ -21,7 +21,7 @@ class pub_rviz():
         self.waypoint_pub = rospy.Publisher("visualization_marker1",Marker,queue_size=1)
         self.robot_pose = None
         self.frame_name = "gazebo"
-        self.waypoint_list = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
+        self.waypoint_list = rospy.get_param('~path')
         self.initial_odom()
         self.initial_waypoint()
 

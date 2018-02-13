@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>
-
-  <arg name="rviz" default="false"/>
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -10,11 +8,6 @@
   <arg name="debug" default="false"/>
   <arg name="world_name" default="duckietown"/>
   <arg name="veh" default="david" doc="Name of vehicle. ex: megaman"/>
-
-  <!-- Open Rviz -->
-  <group if="$(arg rviz)">
-    <include file="$(find pure_pursuit)/launch/viz.launch"/>
-  </group>
 
   <!-- Open Gazebo -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
