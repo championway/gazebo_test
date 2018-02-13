@@ -8,9 +8,6 @@
 $ sudo apt-get install ros-kinetic-gazebo-ros-*
 ```
 
-Note:
-do realsense tutorial first
-
 ## Function
 
 ### pre-work
@@ -35,3 +32,6 @@ $ roslaunch pure_pursuit pure_pursuit.launch
 Open Rviz to see the odometry
 $ roslaunch pure_pursuit viz.launch 
 ```
+Note:
+To change the path, please modify the following file
+gazebo_test/catkin_ws/src/pure_pursuit/config/path/path.yaml
