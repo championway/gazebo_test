@@ -19,8 +19,11 @@ class pub_rviz():
         self.finish = False
         self.frame_name = "gazebo"
         self.waypoint_list = rospy.get_param('~path')
+        self.odom = Marker()
         self.initial_odom()
+        self.lookahead = Marker()
         self.initial_lookahead()
+        self.waypoint = Marker()
         self.initial_waypoint()
         # Init subscribers and publishers
         self.sub_lookahead = rospy.Subscriber("/pure_pursuit/lookahead", Point, self.lookaheadCB, queue_size=1)
@@ -31,7 +34,7 @@ class pub_rviz():
         self.lookahead_pub = rospy.Publisher("lookahead_marker",Marker,queue_size=1)
 
     def initial_lookahead(self):
-        self.lookahead = Marker()
+        #self.lookahead = Marker()
         self.lookahead.header.frame_id = self.frame_name
         self.lookahead.header.stamp = rospy.Time.now()
         self.lookahead.ns = "points_for_odometry"
@@ -45,7 +48,7 @@ class pub_rviz():
         self.lookahead.color.a = 1.0
 
     def initial_waypoint(self):
-        self.waypoint = Marker()
+        #self.waypoint = Marker()
         self.waypoint.header.frame_id = self.frame_name
         self.waypoint.header.stamp = rospy.Time.now()
         self.waypoint.ns = "points_for_waypoint"
@@ -64,7 +67,7 @@ class pub_rviz():
             self.waypoint.points.append(wp)
 
     def initial_odom(self):
-        self.odom = Marker()
+        #self.odom = Marker()
         self.odom.header.frame_id = self.frame_name
         self.odom.header.stamp = rospy.Time.now()
         self.odom.ns = "points_for_odometry"
