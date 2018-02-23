@@ -5,21 +5,16 @@ from std_msgs.msg import Bool
 from gazebo_msgs.msg import ModelStates
 from gazebo_msgs.srv import GetModelState
 from nav_msgs.msg import Path
-from visualization_msgs.msg import Marker
 import numpy as np
 import math
 import tf
+
 """
 This program utilizes pure pursuit to follow a given trajectory.
 """
 
 class gazebo_pure_pursuit():
     def __init__(self):
-        # Init subscribers and publishers
-        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
-        self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
-        self.pub_finish = rospy.Publisher('/gripper_mode/finished', Bool, queue_size=1)
-        self.marker_pub = rospy.Publisher("visualization_marker",Marker,queue_size=1)
         # Init attributes
         self.default_speed = 2
         self.speed = self.default_speed
@@ -28,29 +23,21 @@ class gazebo_pure_pursuit():
         self.robot_pose = None#(-0.3, -0.1789, -0.0246)
         self.destination_pose = None
         self.stop_point = None
-        self.waypoints = [(0, 0),(2,2),(-1,1),(-2,2),(0,0),(1,-2)]
+        self.waypoints = rospy.get_param('~path')
+        #self.waypoints = [(0, 0),(2,2),(-1,1),(-3,3),(-3,0),(1,-2),(0,0)]
         self.current_waypoint_index = 0
         self.distance_from_path = None
-        self.lookahead_distance = 0.3
+        self.lookahead_distance = rospy.get_param("~lookahead")
         #self.lookahead_distance_adjust = self.lookahead_distance
         self.threshold_proximity = 0.2      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
-        self.initial_odom()        
+        # Init subscribers and publishers
+        self.sub_model_state = rospy.Subscriber("/gazebo/model_states", ModelStates, self.model_stateCB, queue_size=1)
+        self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
+        self.pub_lookahead = rospy.Publisher('/pure_pursuit/lookahead', Point, queue_size=1)
+        self.pub_finish = rospy.Publisher('/pure_pursuit/finished', Bool, queue_size=1)
 
-    def initial_odom(self):
-        self.odom = Marker()
-        self.odom.header.frame_id = "gazebo"
-        self.odom.header.stamp = rospy.Time.now()
-        self.odom.ns = "points_for_odometry"
-        self.odom.action = Marker.ADD
-        self.odom.pose.orientation.w = 1.0
-        self.odom.id = 0
-        self.odom.type = Marker.POINTS
-        self.odom.scale.x = 0.1
-        self.odom.scale.y = 0.1
-        self.odom.color.g = 1.0
-        self.odom.color.a = 1.0  
     '''def way_point(self):
         waypoint_name = ["my_cylinder", "my_cylinder_0", "my_cylinder_1", "my_cylinder_2"]
 
@@ -65,12 +52,11 @@ class gazebo_pure_pursuit():
 
         print self.waypoints '''
 
-    def pub_odom(self):
-        p = Point()
-        p.x, p.y = self.robot_pose[:2]
-        p.z = 0
-        self.odom.points.append(p)
-        self.marker_pub.publish(self.odom)
+    def publish_lookhead(self, lookahead):
+        msg = Point()
+        msg.x, msg.y = lookahead[:2]
+        msg.z = 0
+        self.pub_lookahead.publish(msg)
 
     def gazebo_cmd(self, v, w):
         model_state_msg = Twist()
@@ -86,8 +72,10 @@ class gazebo_pure_pursuit():
 
     def model_stateCB(self, msg):
         if not self.active:
-            return
-        #self.pub_odom()
+            return 
+        finish = Bool()
+        finish.data = False
+        self.pub_finish.publish(finish)
         quaternion_msg = [msg.pose[1].orientation.x, msg.pose[1].orientation.y, msg.pose[1].orientation.z, msg.pose[1].orientation.w]
         euler = tf.transformations.euler_from_quaternion(quaternion_msg)
         #print euler[2]
@@ -107,6 +95,7 @@ class gazebo_pure_pursuit():
             self.pub_finish.publish(msg)
 
         else:
+            self.publish_lookhead(self.destination_pose)
             self.speed = self.default_speed
             distance_to_destination= self.getDistance(self.robot_pose, self.destination_pose)
             angle_to_destination = -self.getAngle(self.robot_pose, self.destination_pose)       
@@ -127,7 +116,7 @@ class gazebo_pure_pursuit():
 
     # tell if the point(x,y) is on the line segment(x_start,y_start)-->(x_end,y_end)
     def isPointOnLineSegment(self, x, y, x_start, y_start, x_end, y_end):
-        return round(self.distanceBtwnPoints(x_start, y_start, x, y) + self.distanceBtwnPoints(x, y, x_end, y_end), 5) == round(self.distanceBtwnPoints(x_start, y_start, x_end, y_end), 5)
+        return round(self.distanceBtwnPoints(x_start, y_start, x, y) + self.distanceBtwnPoints(x, y, x_end, y_end), 4) == round(self.distanceBtwnPoints(x_start, y_start, x_end, y_end), 4)
 
     def getDistance(self, start_pose, end_pose):
         #Takes a starting coordinate (x,y,theta) and ending coordinate (x,y) and returns distance between them in map units
@@ -158,9 +147,12 @@ class gazebo_pure_pursuit():
     # Find a point on the line which is closest to the point(robot poisition)
     def closestPoint(self, point, start, end):
         # Initialize values
-        x, y = point[:2]
-        x_start, y_start = start[:2]
-        x_end, y_end = end[:2]
+        x = float(point[0])
+        y = float(point[1])
+        x_start = float(start[0])
+        y_start = float(start[1])
+        x_end = float(end[0])
+        y_end = float(end[1])
         x_closest, y_closest = None, None
         shortest_distance = self.distanceBtwnPoints(x, y, self.waypoints[self.current_waypoint_index][0], self.waypoints[self.current_waypoint_index][1])
 
@@ -182,13 +174,16 @@ class gazebo_pure_pursuit():
     # Using lookahead to find out the waypoint
     def circleIntersect(self, point, start, end, lookahead_distance):
         # For circle equation (x - p)^2 + (y - q)^2 = r^2
-        p, q = point[:2]
-        r = lookahead_distance
+        p = float(point[0])
+        q = float(point[1])
+        r = float(lookahead_distance)
         # Check line segments along path until intersection point is found or we run out of waypoints
         # For line (segment) equation y = mx + b
-        x1, y1 = start[:2]
-        x2, y2 = end[:2]
-
+        x1 = float(start[0])
+        y1 = float(start[1])
+        x2 = float(end[0])
+        y2 = float(end[1])
+        #print x1, y1, x2, y2
         if x2 - x1 != 0:
             m = (y2 - y1)/(x2 - x1)
             b = y1 - m*x1
@@ -204,7 +199,7 @@ class gazebo_pure_pursuit():
                 #self.lookahead_distance_adjust = self.lookahead_distance_adjust + 0.03
                 #print start, " ", end
                 return (None, None)
-                return self.circleIntersect(self.robot_pose, start, end, self.distanceBtwnPoints(p, q, self.waypoints[self.current_waypoint_index-1][0], self.waypoints[self.current_waypoint_index-1][1]))
+                #return self.circleIntersect(self.robot_pose, start, end, self.distanceBtwnPoints(p, q, self.waypoints[self.current_waypoint_index-1][0], self.waypoints[self.current_waypoint_index-1][1]))
             # Points of intersection (could be the same if circle is tangent to line)
             x_intersect1 = (-B + math.sqrt(B**2 - 4*A*C))/(2*A)
             x_intersect2 = (-B - math.sqrt(B**2 - 4*A*C))/(2*A)
@@ -213,8 +208,8 @@ class gazebo_pure_pursuit():
         else:
             x_intersect1 = x1
             x_intersect2 = x1
-            y_intersect1 = q - math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
-            y_intersect2 = q + math.sqrt(-x1**2 + 2*x1*p - p**2 + r**2)
+            y_intersect1 = q - math.sqrt(abs(-x1**2 + 2*x1*p - p**2 + r**2))
+            y_intersect2 = q + math.sqrt(abs(-x1**2 + 2*x1*p - p**2 + r**2))
 
         # See if intersection points are on this specific segment of the line
         if self.isPointOnLineSegment(x_intersect1, y_intersect1, x1, y1, x2, y2):
@@ -229,6 +224,7 @@ class gazebo_pure_pursuit():
         #print y_intersect2, " ", y_intersect2
         #self.lookahead_distance_adjust = self.lookahead_distance_adjust - 0.03
         #return self.circleIntersect(self.robot_pose, start, end, self.distanceBtwnPoints(p, q, self.waypoints[self.current_waypoint_index-1][0], self.waypoints[self.current_waypoint_index-1][1]))
+        #print x_intersect1, y_intersect1, x_intersect2, y_intersect2
         return (None, None)
 
     def pure_pursuit(self):
@@ -244,7 +240,7 @@ class gazebo_pure_pursuit():
         elif cwpi == len(wp)-1:
             if self.threshold_proximity < self.lookahead_distance:
                 self.lookahead_distance = self.threshold_proximity
-                print "change lookahead distance for safty"
+                print "change threshold distance for safty"
             x_endpoint, y_endpoint = wp[-1]
             #print "last one"
             if self.distanceBtwnPoints(x_endpoint, y_endpoint, x_robot, y_robot) <= self.threshold_proximity:
@@ -264,13 +260,19 @@ class gazebo_pure_pursuit():
         waypoints_to_search = [fake_robot_waypoint] + wp[cwpi : ]
 
         if self.lookahead_distance < self.distance_from_path:
-            x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.distance_from_path + 0.1)
+            x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.distance_from_path)
         else:
             x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.lookahead_distance)
         if (x_intersect, y_intersect) == (None, None):
-            #print "Oh-No"
+            if self.start:
+                if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
+                    print "Arrived waypoint : %d"%(cwpi)
+                    self.current_waypoint_index = self.current_waypoint_index + 1
+                    self.start = False
+            #rospy.loginfo("Oh-No")
+            rospy.loginfo(self.current_waypoint_index)
             return fake_robot_waypoint
-        if round(x_intersect,3) == round(wp[cwpi][0], 3) and round(y_intersect, 3) == round(wp[cwpi][1], 3):
+        if round(x_intersect,3) == round(wp[cwpi][0], 3) and round(y_intersect, 3) == round(wp[cwpi][1], 3) or self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
             print "Arrived waypoint : %d"%(cwpi)
             if self.current_waypoint_index < len(self.waypoints)-1:
                 self.current_waypoint_index = self.current_waypoint_index + 1

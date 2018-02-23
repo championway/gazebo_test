@@ -324,4 +324,8 @@
     <parent link="base_link"/>
     <child link="camera"/>
   </joint>
+  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+  <VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+    <origin xyz="0 0 0.05" rpy="0 0 0" />
+  </VLP-16>
 </robot>
