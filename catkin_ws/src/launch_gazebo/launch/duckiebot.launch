@@ -19,6 +19,8 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
+  <node name="global_tf" pkg="pure_pursuit" type="global_tf.py" output="screen" />
+
   <include file="$(find duckietown)/launch/joystick.launch">
       <arg name="veh" value="$(arg veh)"/>
   </include>

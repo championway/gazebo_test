@@ -18,6 +18,43 @@
     </plugin>
   </gazebo>
 
+  <gazebo>
+    <plugin name="p3d_plugin" filename="libgazebo_ros_p3d.so">
+    <bodyName>base_link</bodyName>
+    <frameName>world</frameName>
+    <!--How to define an empty string in xacro?-->
+    <!--<robotNamespace>""</robotNamespace>-->
+    <updateRate>10.0</updateRate>
+    <topicName>p3d_odom</topicName>
+    <xyzOffset>0 0 0</xyzOffset>
+    <rpyOffset>0 0 0</rpyOffset>
+    <gaussianNoise>0</gaussianNoise>-->
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gps_plugin" filename="libhector_gazebo_ros_gps.so">
+    <updateRate>1.0</updateRate>
+    <alwaysOn>true</alwaysOn>
+    <bodyName>base_link</bodyName>
+    <frameId>base_link</frameId>
+    <topicName>gps/fix</topicName>
+    <velocityTopicName>fix_velocity</velocityTopicName>
+
+    <referenceLatitude>36.6</referenceLatitude>
+    <referenceLongitude>-121.9</referenceLongitude>
+    <referenceAltitude>10.0</referenceAltitude>
+
+    <offset>0.0 0.0 0.0</offset>
+    <drift>0.0 0.0 0.0</drift>
+    <gaussianNoise>0.1 0.1 0.1</gaussianNoise>
+
+    <velocityOffset>0.0 0.0 0.0</velocityOffset>
+    <velocityDrift>0.0 0.0 0.0</velocityDrift>
+    <velocityGaussianNoise>0.0 0.0 0.0</velocityGaussianNoise>
+      </plugin>
+  </gazebo>  
+
   <gazebo reference="camera">
     <material>Gazebo/Blue</material>
     <sensor name="camera_1" type="camera">
