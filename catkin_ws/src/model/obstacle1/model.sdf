@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="obstacle1"> 
+    <link name="link">
+      <pose>0 0 0 0 0 0</pose>
+      <collision name="collision">
+        <geometry>
+          <sphere>
+            <radius>.2</radius>
+          </sphere>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0</mu>
+               <mu2>0</mu2>
+              <slip1>1.0</slip1>
+              <slip2>1.0</slip2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+            <sphere>
+              <radius>.2</radius>
+            </sphere>
+          </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Black</name>
+          </script>
+        </material>
+      </visual>
+      <inertial>
+        <mass>10</mass>
+        <inertia>
+          <ixx>10</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>10</iyy>
+          <iyz>0</iyz>
+          <izz>10</izz>
+        </inertia>
+      </inertial>
+    </link>
+  </model>
+</sdf>

@@ -34,7 +34,7 @@ class gazebo_pure_pursuit():
         self.distance_from_path = None
         self.lookahead_distance = rospy.get_param("~lookahead")
         #self.lookahead_distance_adjust = self.lookahead_distance
-        self.threshold_proximity = 0.2      # How close the robot needs to be to the final waypoint to stop driving
+        self.threshold_proximity = 2      # How close the robot needs to be to the final waypoint to stop driving
         self.active = True
         self.start = True
         # Init subscribers and publishers 

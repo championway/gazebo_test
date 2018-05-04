@@ -6,12 +6,12 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="world_name" default="empty"/>
+  <arg name="world_name" default="obstacle"/>
   <arg name="veh" default="david" doc="Name of vehicle. ex: megaman"/>
 
   <!-- Open Gazebo -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <!--arg name="world_name" value="$(find world)/$(arg world_name).world"/-->
+    <arg name="world_name" value="$(find world)/$(arg world_name).world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>

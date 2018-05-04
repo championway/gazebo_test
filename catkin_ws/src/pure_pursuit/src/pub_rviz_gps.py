@@ -127,8 +127,8 @@ class pub_rviz():
         p.y = self.robot_pose.y
         p.z = self.robot_pose.z
         q = Point()
-        q.x = msg.x - 2743010.9432636807
-        q.y = msg.y - 297839.6270080163
+        q.y = msg.x - 2743010.9432636807
+        q.x = -(msg.y - 297839.6270080163)
         q.z = msg.z
         self.lookahead.points[:] = []
         self.lookahead.points.append(p)

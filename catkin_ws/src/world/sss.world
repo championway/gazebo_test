@@ -1,0 +1,749 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.5 -1</direction>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+    </model>
+    <scene>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <model name='bot'>
+      <link name='base_link'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>-0.009956 0 -0.006529 0 -0 0</pose>
+          <mass>22.6244</mass>
+          <inertia>
+            <ixx>0.227567</ixx>
+            <ixy>-3.33922e-21</ixy>
+            <ixz>-0.000278314</ixz>
+            <iyy>0.260969</iyy>
+            <iyz>4.80832e-19</iyz>
+            <izz>0.28416</izz>
+          </inertia>
+        </inertial>
+        <collision name='base_link_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/base_link.STL</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <collision name='base_link_fixed_joint_lump__camera_collision_1'>
+          <pose frame=''>0.12 0 0.1 0 1 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.02 0.02</size>
+            </box>
+          </geometry>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <friction>
+              <ode/>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <collision name='base_link_fixed_joint_lump__velodyne_base_link_collision_2'>
+          <pose frame=''>0 0 0.08585 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <length>0.0717</length>
+              <radius>0.0516</radius>
+            </cylinder>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='base_link_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/base_link.STL</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='base_link_fixed_joint_lump__camera_visual_1'>
+          <pose frame=''>0.12 0 0.1 0 0.9 0</pose>
+          <geometry>
+            <box>
+              <size>0.02 0.02 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Blue</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <visual name='base_link_fixed_joint_lump__velodyne_base_link_visual_2'>
+          <pose frame=''>0 0 0.05 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/opt/ros/kinetic/share/velodyne_description/meshes/VLP16_base_1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='base_link_fixed_joint_lump__velodyne_base_link_visual_3'>
+          <pose frame=''>0 0 0.05 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/opt/ros/kinetic/share/velodyne_description/meshes/VLP16_base_2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <visual name='base_link_fixed_joint_lump__velodyne_visual_4'>
+          <pose frame=''>0 0 0.05 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/opt/ros/kinetic/share/velodyne_description/meshes/VLP16_scan.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>__default__</uri>
+              <name>__default__</name>
+            </script>
+          </material>
+        </visual>
+        <velocity_decay/>
+        <sensor name='camera_1' type='camera'>
+          <update_rate>30</update_rate>
+          <camera name='head'>
+            <horizontal_fov>1.7</horizontal_fov>
+            <image>
+              <width>1920</width>
+              <height>1440</height>
+              <format>R8G8B8</format>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>200</far>
+            </clip>
+          </camera>
+          <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>0.0</updateRate>
+            <cameraName>david/front/camera_node</cameraName>
+            <imageTopicName>image/raw</imageTopicName>
+            <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+            <frameName>camera</frameName>
+            <hackBaseline>0.07</hackBaseline>
+            <robotNamespace>/</robotNamespace>
+          </plugin>
+          <pose frame=''>0.12 0 0.1 0 0.9 0</pose>
+        </sensor>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <sensor name='velodyne-VLP16' type='ray'>
+          <visualize>0</visualize>
+          <update_rate>10</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>440</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.14159</min_angle>
+                <max_angle>3.14159</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>16</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.261799</min_angle>
+                <max_angle>0.261799</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.3</min>
+              <max>131</max>
+              <resolution>0.001</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0</stddev>
+            </noise>
+          </ray>
+          <plugin name='gazebo_ros_laser_controller' filename='libgazebo_ros_velodyne_laser.so'>
+            <topicName>/velodyne_points</topicName>
+            <frameName>velodyne</frameName>
+            <min_range>0.9</min_range>
+            <max_range>130.0</max_range>
+            <gaussianNoise>0.008</gaussianNoise>
+            <robotNamespace>/</robotNamespace>
+          </plugin>
+          <pose frame=''>0 0 0.0877 0 -0 0</pose>
+        </sensor>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='wheelconnect_link'>
+        <pose frame=''>-0.087 0 -0.021 -0 -0 -0.003937</pose>
+        <inertial>
+          <pose frame=''>1.5e-05 0 -0.010847 0 -0 0</pose>
+          <mass>0.913938</mass>
+          <inertia>
+            <ixx>0.000160355</ixx>
+            <ixy>-7.73414e-23</ixy>
+            <ixz>1.58787e-09</ixz>
+            <iyy>0.000110423</iyy>
+            <iyz>1.24826e-22</iyz>
+            <izz>0.000179481</izz>
+          </inertia>
+        </inertial>
+        <collision name='wheelconnect_link_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/wheelconnect_link.STL</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='wheelconnect_link_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/wheelconnect_link.STL</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='connect_joint' type='revolute'>
+        <child>wheelconnect_link</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='swheel_link'>
+        <pose frame=''>-0.09198 0.00502 -0.04 -0 -0 -0.003937</pose>
+        <inertial>
+          <pose frame=''>-0 -0.005 0 0 -0 0</pose>
+          <mass>0.311018</mass>
+          <inertia>
+            <ixx>1.0445e-05</ixx>
+            <ixy>-2.25665e-23</ixy>
+            <ixz>-1.86856e-23</ixz>
+            <iyy>1.57064e-05</iyy>
+            <iyz>5.78702e-23</iyz>
+            <izz>1.0445e-05</izz>
+          </inertia>
+        </inertial>
+        <collision name='swheel_link_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/swheel_link.STL</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='swheel_link_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/swheel_link.STL</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='swheel_joint' type='revolute'>
+        <child>swheel_link</child>
+        <parent>wheelconnect_link</parent>
+        <axis>
+          <xyz>-0.003937 -0.999992 0</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='lwheel_link'>
+        <pose frame=''>0.037 0.076 -0.02 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 -0.01 0 0 -0 0</pose>
+          <mass>5.5779</mass>
+          <inertia>
+            <ixx>0.00145804</ixx>
+            <ixy>-1.99984e-21</ixy>
+            <ixz>1.05546e-21</ixz>
+            <iyy>0.00254422</iyy>
+            <iyz>-3.05243e-21</iyz>
+            <izz>0.00145804</izz>
+          </inertia>
+        </inertial>
+        <collision name='lwheel_link_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/lwheel_link.STL</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='lwheel_link_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/lwheel_link.STL</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='lwheel_joint' type='revolute'>
+        <child>lwheel_link</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <link name='rwheel_link'>
+        <pose frame=''>0.037 -0.076 -0.02 0 -0 0</pose>
+        <inertial>
+          <pose frame=''>0 0.01 0 0 -0 0</pose>
+          <mass>5.5779</mass>
+          <inertia>
+            <ixx>0.00145804</ixx>
+            <ixy>4.60063e-21</ixy>
+            <ixz>-6.46472e-23</ixz>
+            <iyy>0.00254422</iyy>
+            <iyz>-3.87738e-21</iyz>
+            <izz>0.00145804</izz>
+          </inertia>
+        </inertial>
+        <collision name='rwheel_link_collision'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/rwheel_link.STL</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='rwheel_link_visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/home/david/gazebo_test/catkin_ws/src/models/duckiebot_1/meshes/rwheel_link.STL</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <joint name='rwheel_joint' type='revolute'>
+        <child>rwheel_link</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+      </joint>
+      <plugin name='differential_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+        <legacyMode>false</legacyMode>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10</updateRate>
+        <leftJoint>lwheel_joint</leftJoint>
+        <rightJoint>rwheel_joint</rightJoint>
+        <wheelSeparation>0.4</wheelSeparation>
+        <wheelDiameter>0.2</wheelDiameter>
+        <torque>10</torque>
+        <commandTopic>david/cmd_vel</commandTopic>
+        <odometryTopic>david/odom</odometryTopic>
+        <odometryFrame>gazebo</odometryFrame>
+        <robotBaseFrame>base_link</robotBaseFrame>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='p3d_plugin' filename='libgazebo_ros_p3d.so'>
+        <bodyName>base_link</bodyName>
+        <frameName>world</frameName>
+        <updateRate>10.0</updateRate>
+        <topicName>p3d_odom</topicName>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <gaussianNoise>0</gaussianNoise>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <plugin name='gps_plugin' filename='libhector_gazebo_ros_gps.so'>
+        <updateRate>1.0</updateRate>
+        <alwaysOn>true</alwaysOn>
+        <bodyName>base_link</bodyName>
+        <frameId>base_link</frameId>
+        <topicName>gps/fix</topicName>
+        <velocityTopicName>fix_velocity</velocityTopicName>
+        <referenceLatitude>24.788522</referenceLatitude>
+        <referenceLongitude>121.000296</referenceLongitude>
+        <referenceAltitude>10.0</referenceAltitude>
+        <offset>0.0 0.0 0.0</offset>
+        <drift>0.0 0.0 0.0</drift>
+        <gaussianNoise>0.1 0.1 0.1</gaussianNoise>
+        <velocityOffset>0.0 0.0 0.0</velocityOffset>
+        <velocityDrift>0.0 0.0 0.0</velocityDrift>
+        <velocityGaussianNoise>0.0 0.0 0.0</velocityGaussianNoise>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <static>0</static>
+      <plugin name='imu_plugin' filename='libhector_gazebo_ros_imu.so'>
+        <updateRate>10.0</updateRate>
+        <bodyName>base_link</bodyName>
+        <topicName>imu/data</topicName>
+        <serviceName>imu_service</serviceName>
+        <frame_id>base_link</frame_id>
+        <alwaysOn>true</alwaysOn>
+        <accelOffset>0.0 0.0 0.0</accelOffset>
+        <accelDrift>0.0 0.0 0.0</accelDrift>
+        <accelDriftFrequency>0.00027 0.00027 0.000027</accelDriftFrequency>
+        <accelGaussianNoise>0.0 0.0 0.0</accelGaussianNoise>
+        <rateOffset>0.0 0.0 0.0</rateOffset>
+        <rateDrift>0.0 0.0 0.0</rateDrift>
+        <rateDriftFrequency>0.00027 0.00027 0.000027</rateDriftFrequency>
+        <rateGaussianNoise>0.0 0.0 0.0</rateGaussianNoise>
+        <yawOffset>0.0</yawOffset>
+        <yawDrift>0.0</yawDrift>
+        <yawDriftFrequency>0.00027</yawDriftFrequency>
+        <yawGaussianNoise>0.0</yawGaussianNoise>
+        <robotNamespace>/</robotNamespace>
+      </plugin>
+      <pose frame=''>1 0 0 0 -0 0</pose>
+    </model>
+    <model name='buoy_a3'>
+      <link name='link'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://buoy_A3/meshes/a3.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <mesh>
+              <uri>model://buoy_A3/meshes/a3.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>10</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>10</iyy>
+            <iyz>0</iyz>
+            <izz>10</izz>
+          </inertia>
+        </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-0.047015 -0.17842 0 0 -0 0</pose>
+    </model>
+    <state world_name='default'>
+      <sim_time>77 265000000</sim_time>
+      <real_time>85 1800363</real_time>
+      <wall_time>1525439207 144781954</wall_time>
+      <iterations>77265</iterations>
+      <model name='bot'>
+        <pose frame=''>0.962359 0.003855 0.049954 3.4e-05 -0.000219 0.055925</pose>
+        <scale>1 1 1</scale>
+        <link name='base_link'>
+          <pose frame=''>0.962359 0.003855 0.049954 3.4e-05 -0.000219 0.055925</pose>
+          <velocity>0.000245 2e-06 0.000671 -0.000694 0.014375 -4.5e-05</velocity>
+          <acceleration>0.54944 0.0035 1.62095 1.9966 -0.573552 -3.12217</acceleration>
+          <wrench>12.4307 0.079193 36.6731 0 -0 0</wrench>
+        </link>
+        <link name='lwheel_link'>
+          <pose frame=''>0.995058 0.081805 0.029964 -1e-05 -0.198903 0.055914</pose>
+          <velocity>0.000107 1.9e-05 4.1e-05 -0.000855 0.003573 -0.004649</velocity>
+          <acceleration>0.360149 0.044259 0.083958 1.5176 0.603249 0.239134</acceleration>
+          <wrench>2.00888 0.24687 0.468308 0 -0 0</wrench>
+        </link>
+        <link name='rwheel_link'>
+          <pose frame=''>1.00355 -0.069956 0.029959 7.9e-05 -0.122976 0.055928</pose>
+          <velocity>9.9e-05 -2.4e-05 3.4e-05 0.001028 0.003328 0.004667</velocity>
+          <acceleration>0.357638 -0.037651 0.080719 -0.812391 0.454937 0.012332</acceleration>
+          <wrench>1.99487 -0.210014 0.450242 0 -0 0</wrench>
+        </link>
+        <link name='swheel_link'>
+          <pose frame=''>0.872289 0.005291 0.009972 0.00026 -0.78589 -0.313187</pose>
+          <velocity>-9.1e-05 -6.8e-05 0.009565 0.009131 -0.002979 0.010693</velocity>
+          <acceleration>0.262115 0.135661 19.0335 2.86415 -1.44284 -1.63925</acceleration>
+          <wrench>0.081522 0.042193 5.91975 0 -0 0</wrench>
+        </link>
+        <link name='wheelconnect_link'>
+          <pose frame=''>0.875501 -0.001006 0.028941 6.8e-05 4.8e-05 -0.312885</pose>
+          <velocity>8.7e-05 1.6e-05 0.003139 0.005819 0.062753 0.034093</velocity>
+          <acceleration>-0.941634 0.158855 6.27645 1.62357 -0.919169 1.17824</acceleration>
+          <wrench>-0.860595 0.145184 5.73628 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='buoy_a3'>
+        <pose frame=''>-0.654057 -1.664 0.368001 8.3e-05 9.2e-05 -3.7e-05</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-0.654057 -1.664 0.368001 8.3e-05 9.2e-05 -3.7e-05</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 -9.8 0 -0 0</acceleration>
+          <wrench>0 0 -98 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>4.04782 -4.03992 1.7436 0 0.275643 2.35619</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+  </world>
+</sdf>

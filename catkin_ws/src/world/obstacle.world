@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name='default'>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <scene>
+      <sky>
+        <clouds>
+          <speed>12</speed>
+        </clouds>
+      </sky>
+    </scene>
+
+    <include>
+      <pose>3 3 0 0 0 0 </pose>
+      <name>ob1</name>
+      <uri>model://obstacle1</uri>
+    </include>
+
+    <include>
+      <pose>-1 -2 0 0 0 0 </pose>
+      <name>ob1-1</name>
+      <uri>model://obstacle1</uri>
+    </include>
+
+    <include>
+      <pose>-3 1 0 0 0 0 </pose>
+      <name>ob1-2</name>
+      <uri>model://obstacle1</uri>
+    </include>
+
+    <include>
+      <pose>4 4 0 0 0 0 </pose>
+      <name>ob2</name>
+      <uri>model://obstacle2</uri>
+    </include>
+
+    <include>
+      <pose>4 -4 0 0 0 0 </pose>
+      <name>ob2-1</name>
+      <uri>model://obstacle2</uri>
+    </include>
+
+    <include>
+      <pose>4 1 0 0 0 0 </pose>
+      <name>ob3</name>
+      <uri>model://obstacle3</uri>
+    </include>
+
+    <include>
+      <pose>2 -1 0 0 0 0 </pose>
+      <name>ob3-1</name>
+      <uri>model://obstacle3</uri>
+    </include>
+
+  </world>
+</sdf>
