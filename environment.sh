@@ -2,6 +2,7 @@
 
 # Do not compile Lisp messages
 # XXX: not sure if this is the place to put this.
+export PYTHONPATH=$(pwd - P)/catkin_ws/src/utm
 export ROS_LANG_DISABLE=gennodejs:geneus:genlisp
 GAZEBO_MODEL_PATH=$(pwd - P)/catkin_ws/src/model
 shell=`basename $SHELL`
