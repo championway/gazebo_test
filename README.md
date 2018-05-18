@@ -14,7 +14,7 @@ $ sudo apt-get install ros-kinetic-gazebo-ros-*
 
 ```
 $ cd gazebo_test/catkin_ws
-$ source devel/setup.bash
+$ source environment.sh
 ```
 Note:
 Do it everytime as you open new terminals
@@ -36,3 +36,22 @@ Note:
 To change the path, please modify the following file
 
 gazebo_test/catkin_ws/src/pure_pursuit/config/path/path.yaml
+
+### Obstacle Avoidance
+
+```
+Open gazebo with one mobile robot
+$ roslaunch launch_gazebo obstacle.launch
+
+Point cloud clustering
+$ rosrun point_cloud obstacle_cluster
+
+Obstacle coordinate processing
+$ rosrun pure_pursuit obstacle_coordinate.py
+
+Run RRT algorithm
+$ rosrun rrt rrt.py
+
+Run pure pursuit algorithm
+$ roslaunch pure_pursuit pure_pursuit_gps.launch lookahead:=0.8
+```
