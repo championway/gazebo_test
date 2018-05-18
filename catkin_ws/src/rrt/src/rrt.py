@@ -1,30 +1,31 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import PoseStamped, PointStamped, Twist, Point
-from robotx_pcl_msgs.msg import ObstaclePoseList
+from robotx_msgs.msg import ObstaclePoseList, WayPoint, WayPointList
 import numpy as np
 import math
 import tf
 import sys
 import random
 from math import sqrt, cos, sin, atan2 ,pow
-
+#from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer, Subscriber
+import message_filters
 # constants
 XDIM = 640
 YDIM = 480
 WINSIZE = [XDIM, YDIM]  #for map size
-EPSILON = 0.1           #each RRT route's distance
+EPSILON = 0.08           #each RRT route's distance
 Theta = 0               #start and destination 's Theta
-start = [0,0]         #start
-des = [6,5]           #destination
+start = None         #start
+des = [5,1]           #destination
 dis = 0
 a = 0                   #oval's a
 b = 0                   #oval's b
-Range = 0.1               #car size ( range*range )
+Range = 0.25               #car size ( range*range )
 route = []              #route for RRT ( for  application )
 obstacle = []           #obstacle [ x ,y ,range]
 obstacle_num = 5
-accuracy = 0.1            # for arrive Accuracy
+accuracy = 1            # for arrive Accuracy
 
 #rotate matrix
 def rotate(point,theta):
@@ -32,6 +33,7 @@ def rotate(point,theta):
 
 #Weights  ( need modify )
 def random_weights():
+    print start
     center = (start[0]+des[0]) / 2 , (start[1]+des[1]) / 2
     center_r = rotate(center,Theta)
     while True:
@@ -57,7 +59,7 @@ def step_from_to(p1, p2):
 #need modify by ros subscriber , we temporarily assign randomly
 def obstacle_add(msg):
     for i in range(msg.size):
-        obs = [msg.list[i].x, msg.list[i].y, msg.list[i].r]
+        obs = [msg.list[i].x, msg.list[i].y, 0.7]
         obstacle.append(obs)
 
 #confirm  whether avoid obstacle or not
@@ -70,7 +72,7 @@ def judgment(origin , point):
             temp[1] = origin[1]
             temp[2] = origin[2]
 
-            print "May Collision"
+            #print "May Collision"
 
             for j in range(int(EPSILON)):
                 temp[0] +=  cos(theta_1)
@@ -78,28 +80,50 @@ def judgment(origin , point):
                 if dist(i,temp) <  (Range + i[2]) :
                     print "Collision"
                     return False
-            print "Succeed in avoidance "
+            #print "Succeed in avoidance "
     return True
 
 def Theta_get(p1,p2):
     return  atan2(p2[1] - p1[1], p2[0] - p1[0])
 
-def obstacle_cb(msg):
-    # initialize and prepare screen
-    global a, b ,Theta,dis
-    obstacle_add(msg)
-    print "obstacle =  ",obstacle
+def pose_cb(msg):
+    global start
+    start = [1, 1]
+    #start = [msg.pose.position.x, msg.pose.position.y]
+    print start
 
+def call_back(obs_msg, pos_msg):
+    '''print "okok"
+    waypointlist = WayPointList()
+    waypoint = WayPoint()
+    waypoint.x = 1
+    waypoint.y = 0
+    waypointlist.list.append(waypoint)
+    waypoint = WayPoint()
+    waypoint.x = 2
+    waypoint.y = 1
+    waypointlist.list.append(waypoint)
+    pub_waypoint.publish(waypointlist)'''
+    print "hhh"
+    global start
+    start = [pos_msg.pose.position.x, pos_msg.pose.position.y]
+    # initialize and prepare screen
+
+    global a, b ,Theta,dis
+    obstacle_add(obs_msg)
+    #print "obstacle =  ",obstacle
+    print "start = ", start
     Theta = Theta_get(start, des)
     dis = dist(start , des)
     a = dis/2 * 1.3                     #need modify if needed
-    b = dis/2 * 0.5                     #need modify if needed
+    b = dis/2 * 0.8                     #need modify if needed
     #print dis ,a ,b
 
     nodes = []
     start.append(0)
     nodes.append(start)
     while True:
+        print "fuck for while"
         ran_point = random_weights()
         nn = nodes[0]
         num = 0
@@ -120,12 +144,29 @@ def obstacle_cb(msg):
         num = nodes[num][2]
     route.append(nodes[num])
     route.reverse()
+    waypoint = WayPoint()
+    waypointlist = WayPointList()
     print "------------------------Start--------------------------"
     for i in route:
         print "x = " , i[0] , ", y = " , i[1]
+        waypoint = WayPoint()
+        waypoint.x = i[0]
+        waypoint.y = i[1]
+        waypointlist.list.append(waypoint)
     print "-----------------------Arrive--------------------------"
+    pub_waypoint.publish(waypointlist)
+    start = None
+    nodes = []
+
+
 # if python says run, then we should run
 if __name__ == '__main__':
     rospy.init_node('rrt', anonymous=False)
-    rospy.Subscriber("/obstacle_list", ObstaclePoseList, obstacle_cb, queue_size=1)
+    pub_waypoint = rospy.Publisher('/waypoint_list', WayPointList, queue_size=1)
+    obs_sub = message_filters.Subscriber("/obstacle_list", ObstaclePoseList)
+    pos_sub = message_filters.Subscriber("/pose", PoseStamped)
+    
+    ats = message_filters.ApproximateTimeSynchronizer([obs_sub, pos_sub],queue_size = 1, slop = 1)
+    ats.registerCallback(call_back)
+    print "fuck"
     rospy.spin()

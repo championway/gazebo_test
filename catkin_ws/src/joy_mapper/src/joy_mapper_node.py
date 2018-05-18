@@ -89,8 +89,8 @@ class JoyMapper(object):
             car_cmd_msg.omega = self.joy.axes[3] * self.omega_gain
         self.pub_car_cmd.publish(car_cmd_msg)
         car_twist_msg = Twist()
-        car_twist_msg.linear.x = car_cmd_msg.v*1.5
-        car_twist_msg.angular.z = car_cmd_msg.omega*1.5     
+        car_twist_msg.linear.x = car_cmd_msg.v*3
+        car_twist_msg.angular.z = car_cmd_msg.omega*0.8     
         self.pub_car_twist.publish(car_twist_msg)
 
 # Button List index of joy.buttons array:

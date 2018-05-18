@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(robotx_pcl_msgs)
+project(robotx_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -19,6 +19,8 @@ add_message_files(
   FILES
   ObstaclePose.msg
   ObstaclePoseList.msg
+  WayPoint.msg
+  WayPointList.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

@@ -20,43 +20,43 @@
     </scene>
 
     <include>
-      <pose>3 3 0 0 0 0 </pose>
+      <pose>1.4 -2.4 0 0 0 0 </pose>
       <name>ob1</name>
       <uri>model://obstacle1</uri>
     </include>
 
     <include>
-      <pose>-1 -2 0 0 0 0 </pose>
+      <pose>-1.3 -1.2 0 0 0 0 </pose>
       <name>ob1-1</name>
       <uri>model://obstacle1</uri>
     </include>
 
     <include>
-      <pose>-3 1 0 0 0 0 </pose>
+      <pose>-0.65 -2.8 0 0 0 0 </pose>
       <name>ob1-2</name>
       <uri>model://obstacle1</uri>
     </include>
 
     <include>
-      <pose>4 4 0 0 0 0 </pose>
+      <pose>-1.4 -3.7 0 0 0 0 </pose>
       <name>ob2</name>
       <uri>model://obstacle2</uri>
     </include>
 
     <include>
-      <pose>4 -4 0 0 0 0 </pose>
+      <pose>0.2 -1.8 0 0 0 0 </pose>
       <name>ob2-1</name>
       <uri>model://obstacle2</uri>
     </include>
 
     <include>
-      <pose>4 1 0 0 0 0 </pose>
+      <pose>0.8 -1.1 0 0 0 0 </pose>
       <name>ob3</name>
       <uri>model://obstacle3</uri>
     </include>
 
     <include>
-      <pose>2 -1 0 0 0 0 </pose>
+      <pose>0.7 -3.2 0 0 0 0 </pose>
       <name>ob3-1</name>
       <uri>model://obstacle3</uri>
     </include>

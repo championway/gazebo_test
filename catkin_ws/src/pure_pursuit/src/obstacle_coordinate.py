@@ -58,14 +58,17 @@ class gazebo_pure_pursuit():
         self.pose.pose.orientation.y = q_new[1]
         self.pose.pose.orientation.z = q_new[2]
         self.pose.pose.orientation.w = q_new[3]
+        print(q_new[0],q_new[1],q_new[2],q_new[3])
         #self.pose.pose.orientation.w = self.pose.pose.orientation.w*math.cos(np.pi/2)
         #self.pose.pose.orientation.z = self.pose.pose.orientation.z*math.sin(np.pi/2)
         
         x_y = utm.from_latlon(gps_msg.latitude, gps_msg.longitude)
+        self.pose.header.stamp = rospy.Time.now()
         self.pose.pose.position.x = x_y[0] - self.first_pose.pose.position.x
         self.pose.pose.position.y = x_y[1] - self.first_pose.pose.position.y
         self.pose.pose.position.z = 0
         self.pub_pose.publish(self.pose)
+        print(self.pose.pose.position.x, self.pose.pose.position.y)
         print("Finish")
 
 

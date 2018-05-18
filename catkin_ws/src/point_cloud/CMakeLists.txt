@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   rospy
-  robotx_pcl_msgs
+  robotx_msgs
   sensor_msgs
   std_msgs
 )
@@ -212,3 +212,5 @@ include_directories(
 
 add_executable(obstacle_cluster src/obstacle_cluster.cpp)
 target_link_libraries(obstacle_cluster ${catkin_LIBRARIES})
+add_executable(modify_pointcloud src/modify_pointcloud.cpp)
+target_link_libraries(modify_pointcloud ${catkin_LIBRARIES})
