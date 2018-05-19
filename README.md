@@ -47,7 +47,10 @@ Point cloud clustering
 $ rosrun point_cloud obstacle_cluster
 
 Obstacle coordinate processing
-$ rosrun pure_pursuit obstacle_coordinate.py
+$ rosrun coordinate coordinate.py
+
+Broadcast TF
+$ rosrun coordinate tf_publisher.py
 
 Run RRT algorithm
 $ rosrun rrt rrt.py
