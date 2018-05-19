@@ -19,7 +19,7 @@ class gazebo_pure_pursuit():
         # Init attributes
         print ("start")
         self.pose = PoseStamped()
-        self.pose.header.frame_id = "gps_imu"
+        self.pose.header.frame_id = "map"
         self.first_pose = PoseStamped()
         self.origin_pose = PoseStamped()
         self.origin_pose.header.frame_id = "map"
@@ -45,7 +45,7 @@ class gazebo_pure_pursuit():
         #self.sub_gps = rospy.Subscriber("/gps/fix", NavSatFix, self.gps_cb, queue_size=1)
         self.pub_gazebo = rospy.Publisher('/david/cmd_vel', Twist, queue_size=1)
         self.pub_origin_pose = rospy.Publisher('/orig_pose', PoseStamped, queue_size=1)
-        self.pub_pose = rospy.Publisher('/pose', PoseStamped, queue_size=1)
+        self.pub_pose = rospy.Publisher('/robot_pose', PoseStamped, queue_size=1)
 
     '''def imu_cb(self, msg):
         quaternion_msg = [msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w]

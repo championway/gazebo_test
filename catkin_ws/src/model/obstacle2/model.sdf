@@ -6,7 +6,7 @@
       <collision name="collision">
         <geometry>
           <sphere>
-            <radius>.13</radius>
+            <radius>0.15</radius>
           </sphere>
         </geometry>
         <surface>
@@ -24,7 +24,7 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
             <sphere>
-              <radius>.13</radius>
+              <radius>0.15</radius>
             </sphere>
           </geometry>
         <material>
