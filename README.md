@@ -40,17 +40,14 @@ gazebo_test/catkin_ws/src/pure_pursuit/config/path/path.yaml
 ### Obstacle Avoidance
 
 ```
-Open gazebo with one mobile robot
+Open gazebo with one mobile robot & Point cloud clustering
 $ roslaunch launch_gazebo obstacle.launch
 
-Point cloud clustering
-$ rosrun point_cloud obstacle_cluster
-
 Obstacle coordinate processing
-$ rosrun coordinate coordinate.py
+$ roslaunch launch_gazebo coordinat_tf.launch
 
-Broadcast TF
-$ rosrun coordinate tf_publisher.py
+Building global map (Not done yet)
+$ rosrun coordinate map.py
 
 Run RRT algorithm
 $ rosrun rrt rrt.py

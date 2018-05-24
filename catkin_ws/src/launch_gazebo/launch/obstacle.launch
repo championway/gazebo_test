@@ -21,10 +21,13 @@
 
   <node name="global_tf" pkg="pure_pursuit" type="global_tf.py" output="screen" />
 
+  <node name="obstacle_cluster" pkg="point_cloud" type="obstacle_cluster" output="screen" />
+
   <include file="$(find duckietown)/launch/joystick.launch">
       <arg name="veh" value="$(arg veh)"/>
   </include>
 
   <param name="robot" command="$(find xacro)/xacro.py '$(find bot)/urdf/bot.xacro' veh:=david"/>
-  <node name="robot1" pkg="gazebo_ros" type="spawn_model" output="screen" args="-x 0 -y -0 -z -0 -R 0 -P 0 -Y -0 -urdf -param robot -model bot"/>
+  <!--param name="robot" command="$(find xacro)/xacro.py '$(find duckiecar)/urdf/duckiecar.xacro' veh:=david"/-->
+  <node name="robot1" pkg="gazebo_ros" type="spawn_model" output="screen" args="-x 0 -y -0 -z -0 -R 0 -P 0 -Y -0 -urdf -param robot -model duckiecar"/>
 </launch>

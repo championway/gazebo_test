@@ -3,3 +3,5 @@ float64 x
 float64 y
 float64 z
 float64 r
+int32 confidence
+bool occupy
