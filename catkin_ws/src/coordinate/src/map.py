@@ -5,6 +5,7 @@ from geometry_msgs.msg import Point
 from robotx_msgs.msg import ObstaclePose, ObstaclePoseList
 import math
 from visualization_msgs.msg import Marker
+from tf import TransformListener,TransformerROS
 
 class map():
     def __init__(self):
@@ -13,7 +14,8 @@ class map():
         self.first = True   # process first time
         self.radius = 1   # to check whether the measurement obstacle is correspond to global map or not
         self.confi_threshold = 5 # confidence threshold, to determine whether to add point to map or not
-
+        self.tf = TransformListener()
+        self.transformer = TransformerROS()
         # Subscribers
         self.obstacle_list = rospy.Subscriber("/obstacle_list", ObstaclePoseList, self.call_back, queue_size=1)
         # Publishers
@@ -45,9 +47,21 @@ class map():
         return math.sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z))
 
     def call_back(self, msg):
+        position, quaternion = self.tf.lookupTransform("/map", "/velodyne", rospy.Time(0))
+        transpose_matrix = self.transformer.fromTranslationRotation(position, quaternion)
+        
+        #print type(position)
+        #print type(quaternion)
         print ("Process Obstacle List")
         obs_list = ObstaclePoseList()
         obs_list = msg
+        for i in range(0, obs_list.size):
+            origin_p = np.array([obs_list.list[i].x, obs_list.list[i].y, obs_list.list[i].z, 1])
+            new_p = np.dot(transpose_matrix, origin_p)
+            obs_list.list[i].x = new_p[0]
+            obs_list.list[i].y = new_p[1]
+            obs_list.list[i].z = new_p[2]
+
         if self.first:  # record the first detection to be global map
             self.global_map = obs_list
             for i in range(0, self.global_map.size):
