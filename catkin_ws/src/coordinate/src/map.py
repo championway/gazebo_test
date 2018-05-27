@@ -46,6 +46,14 @@ class map():
     def distance(self, a, b): # caculate distance between two 3d points
         return math.sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z))
 
+    def update_obs_pos(self, measurement, prior): # update obstacle position by weighting measurement and original map
+        posterior = ObstaclePose()
+        posterior = prior
+        posterior.x = measurement.x*0.3 + prior.x*0.7
+        posterior.y = measurement.y*0.3 + prior.y*0.7
+        posterior.z = measurement.z*0.3 + prior.z*0.7
+        return posterior
+
     def call_back(self, msg):
         position, quaternion = self.tf.lookupTransform("/map", "/velodyne", rospy.Time(0))
         transpose_matrix = self.transformer.fromTranslationRotation(position, quaternion)
@@ -80,7 +88,9 @@ class map():
                     if dis < min_dis:
                         index = j
                         min_dis = dis
-            if min_dis < self.radius:
+            if min_dis < self.radius:   # believe that measurement[i] is corresponded to the map[index]
+                self.global_map.list[index].occupy = True
+                self.global_map.list[index] = self.update_obs_pos(obs_list.list[i], self.global_map.list[index])
                 if self.global_map.list[index].confidence < self.confi_threshold:
                     self.global_map.list[index].confidence = self.global_map.list[index].confidence + 1
             else:
