@@ -111,15 +111,15 @@
       </plugin>
     </sensor>
   </gazebo>
-
+  
   <link
     name="base_link">
     <inertial>
       <origin
         xyz="-0.0153668055531249 4.44089209850063E-16 -0.0534671165486267"
-        rpy="0 -3.14 0" />
+        rpy="0 0 0" />
       <mass
-        value="22.4144467859455" /> <!--947.122649398591-->
+        value="9.47122649398591" />
       <inertia
         ixx="301.370472338624"
         ixy="6.92689818265253E-14"
@@ -159,7 +159,7 @@
         xyz="0 -0.1 0"
         rpy="0 0 0" />
       <mass
-        value="5.57789775644867" /> <!--56.5329598013484-->
+        value="5.65329598013484" />
       <inertia
         ixx="1.46078812586693"
         ixy="-1.49642487348259E-19"
@@ -203,7 +203,7 @@
     <child
       link="lwheel_link" />
     <axis
-      xyz="0 -1 0" />
+      xyz="0 1 0" />
   </joint>
   <link
     name="rwheel_link">
@@ -212,7 +212,7 @@
         xyz="0 0.100000000000001 -4.44089209850063E-16"
         rpy="0 0 0" />
       <mass
-        value="5.57789775644867" />
+        value="5.65329598013484" />
       <inertia
         ixx="1.46078812586693"
         ixy="-5.64688631530968E-21"
@@ -256,7 +256,7 @@
     <child
       link="rwheel_link" />
     <axis
-      xyz="0 -1 0" />
+      xyz="0 1 0" />
   </joint>
   <link
     name="connect_link">
@@ -265,7 +265,7 @@
         xyz="6.93889390390723E-17 -4.44089209850063E-16 -0.0822001861947705"
         rpy="0 0 0" />
       <mass
-        value="12.2264377536546" />
+        value="0.122264377536546" />
       <inertia
         ixx="0.353513318523549"
         ixy="3.80767513481362E-17"
@@ -318,7 +318,7 @@
         xyz="0 0.0999999999999996 0"
         rpy="0 0 0" />
       <mass
-        value="11.8409774219159" />
+        value="0.118409774219159" />
       <inertia
         ixx="0.090404402128395"
         ixy="-1.69109339641811E-18"
@@ -362,38 +362,6 @@
     <child
       link="swheel_link" />
     <axis
-      xyz="0 -1 0" />
+      xyz="0 1 0" />
   </joint>
-
-  <link name="camera">
-    <collision>
-      <origin rpy="0 0.1 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.02 0.02 0.02"/>
-      </geometry>
-    </collision>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.02 0.02 0.02"/>
-      </geometry>
-    </visual>
-    <inertial>
-      <mass value="0.01"/>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <box_inertia m="0.1" x="0.02" y="0.02" z="0.02"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
-    </inertial>
-  </link>
-  <joint name="camera_joint" type="fixed">
-    <axis xyz="0 0 0"/>
-    <origin rpy="0 0.9 0" xyz=".12 0 .1"/>
-    <parent link="base_link"/>
-    <child link="camera"/>
-  </joint>
-  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
-  <VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
-    <origin xyz="1.5 0 0.05" rpy="0 0 0" />
-  </VLP-16>
-
 </robot>
