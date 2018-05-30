@@ -193,13 +193,16 @@ void cluster_pointcloud()
     //std::cout<< "b:" << b << std::endl;
 
 
-    pcl::compute3DCentroid(*cloud_cluster, centroid);
+    //pcl::compute3DCentroid(*cloud_cluster, centroid);
     //std::cout << centroid << std::endl;
     ob_pose.header.stamp = ros::Time::now();
     ob_pose.header.frame_id = cloud_cluster->header.frame_id;
-    ob_pose.x = centroid[0];
-    ob_pose.y = centroid[1];
-    ob_pose.z = centroid[2];
+    //ob_pose.x = centroid[0];
+    //ob_pose.y = centroid[1];
+    //ob_pose.z = centroid[2];
+    ob_pose.x = ans(0);
+    ob_pose.y = ans(1);
+    ob_pose.z = ans(2);
     ob_pose.r = float(sqrt(ans(3)+pow(ans(0),2)+pow(ans(1),2)+pow(ans(2),2)));
     std::cout << ob_pose.r << std::endl;
     /*for(int i = 0; i < result->points.size(); i++)
