@@ -38,7 +38,7 @@ class gazebo_pure_pursuit():
         #tss = TimeSynchronizer(Subscriber("/imu/data", Imu),Subscriber("/fix", NavSatFix))
         #tss.registerCallback(call_back)
         imu_sub = Subscriber("imu/data", Imu)
-        gps_sub = Subscriber("/fix", NavSatFix)
+        gps_sub = Subscriber("/gps", NavSatFix)
         ats = ApproximateTimeSynchronizer((imu_sub, gps_sub),queue_size = 1, slop = 0.1)
         ats.registerCallback(self.call_back)
         #self.sub_imu = rospy.Subscriber("/imu/data", Imu, self.imu_cb, queue_size=1)
